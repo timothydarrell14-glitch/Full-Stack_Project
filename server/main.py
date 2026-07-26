@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from app import db, ma, jwt
+from app.extensions import db, ma, jwt
 from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
@@ -19,7 +19,7 @@ jwt.init_app(app)
 
 # Initialise migrate
 
-migrate = Migrate (db, app)
+migrate = Migrate (app,db)
 
 if __name__ == "__main__":
     app.run(debug=True)
