@@ -25,14 +25,14 @@ Transaction summary and analysis
   ├── Cash outflow (expenses)
   ├── Net cash flow / balance
   ├── Recent transactions
-  ├── Spending by category
+  ├── Spending by tag
   └── Savings-goal progress
 ```
 
 1. **Login**: A user signs in with their account credentials. The backend authenticates the user and issues a JWT access token.
 2. **Dashboard**: After login, the user is taken to their financial dashboard.
-3. **Summary and analysis**: The dashboard retrieves the user’s transactions and savings goals, then presents totals, recent activity, category breakdowns, and visual charts.
-4. **Manage transactions**: The user can add, review, update, or remove transactions and assign each transaction to a category.
+3. **Summary and analysis**: The dashboard retrieves the user’s transactions and savings goals, then presents totals, recent activity, tag breakdowns, and visual charts.
+4. **Manage transactions**: The user can add, review, update, or remove transactions and assign each transaction to a tag.
 5. **Track savings**: The user can create savings goals with a target amount and target date, then monitor their progress over time.
 
 ## Existing data models
@@ -42,9 +42,50 @@ The backend models in `server/app/models/` provide the foundation for the applic
 | Model | Purpose | Current fields |
 | --- | --- | --- |
 | `User` | Stores account information for each person using the application. | `id`, `name`, `email`, `age`, `password` |
-| `Transaction` | Stores an individual financial record owned by a user. | `id`, `name`, `user_id`, `amount`, `date`, `category_id` |
-| `Category` | Groups transactions for analysis, such as Food, Transport, Salary, or Rent. | `id`, `name` |
+| `Transaction` | Stores an individual financial record owned by a user. | `id`, `name`, `user_id`, `amount`, `date`, `tag_id` |
+| `Tag` | Groups transactions for analysis, such as Food, Transport, Salary, or Rent. | `id`, `name` |
 | `Saving` | Stores a savings target belonging to a user. | `id`, `title`, `goal`, `start_date`, `goal_date`, `user_id` |
+
+### Entity relationship diagram
+
+```mermaid
+erDiagram
+  USER ||--o{ TRANSACTION : owns
+  USER ||--o{ SAVING : creates
+  TAG ||--o{ TRANSACTION : groups
+
+  USER {
+    int id PK
+    string name
+    string email
+    int age
+    string password
+  }
+
+  TRANSACTION {
+    int id PK
+    int user_id FK
+    string name
+    decimal amount
+    date date
+    int tag_id FK
+    string type "income|expense (planned)"
+  }
+
+  TAG {
+    int id PK
+    string name
+  }
+
+  SAVING {
+    int id PK
+    int user_id FK
+    string title
+    decimal goal
+    date start_date
+    date goal_date
+  }
+```
 
 ### Model improvements needed for the full dashboard
 
@@ -71,7 +112,7 @@ Full-Stack_Project/
 │       └── api/                    # Client-side API requests
 ├── server/                         # Flask backend
 │   ├── app/
-│   │   ├── models/                 # User, transaction, category, and savings models
+│   │   ├── models/                 # User, transaction, tag, and savings models
 │   │   ├── routes/                 # API endpoint modules
 │   │   ├── controllers/            # Request and business logic
 │   │   ├── schemas/                # Validation and serialization schemas
@@ -175,7 +216,7 @@ The backend route and controller folders are organised for these endpoints:
 - Account registration and login
 - User profile management
 - Transaction create, read, update, and delete operations
-- Transaction categories
+- Transaction tags
 - Savings-goal create, read, update, and delete operations
 - Dashboard totals and chart-ready analysis data
 
