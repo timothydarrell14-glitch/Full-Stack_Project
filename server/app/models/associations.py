@@ -1,4 +1,4 @@
-from extensions import db
+from app.extensions import db
 
 transactions_tags = db.Table(
     'transactions_tags',
