@@ -1,0 +1,18 @@
+# Python bytecode cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# Flask local/instance files (Sensitive database & keys)
+instance/
+.env
+.flaskenv
+
+# IDE settings
+.vscode/
+.idea/

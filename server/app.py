@@ -8,9 +8,9 @@ app = Flask(__name__)
 
 # Configure db, secret key
 
-app.config['SQLALCHEMY_DATABASE_URI'] = None
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['JWT_SECRET_KEY'] = None
+app.config['JWT_SECRET_KEY'] = 'jwt_secret_key'
 
 # Initialise db, ma, jwt
 db.init_app(app)
