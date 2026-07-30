@@ -24,6 +24,7 @@ class TransactionController:
         if transaction:
             db.session.delete(transaction)
             db.session.commit()
+            return True
         return None
 # update/edit
     @classmethod

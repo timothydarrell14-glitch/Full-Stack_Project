@@ -25,6 +25,7 @@ class TagController:
         if tag:
             db.session.delete(tag)
             db.session.commit()
+            return True
         return None
 # update/edit
     @classmethod
