@@ -8,4 +8,4 @@ class Saving(db.Model):
     goal=db.Column(db.Integer)
     goal_date=db.Column(db.Date)
     start_date=db.Column(db.Date)
-    user_id=db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id=db.relationship('User', back_populates='savings', lazy=True)

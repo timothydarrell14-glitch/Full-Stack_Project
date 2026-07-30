@@ -8,3 +8,4 @@ class User(db.Model):
     email=db.Column(db.String(120), nullable=False, unique=True)
     age=db.Column(db.Integer)
     password=db.Column(db.String(120), nullable=False, unique=True)
+    savings=db.relationship('Saving', back_populates='user_id', lazy=True)
