@@ -9,3 +9,4 @@ class Transaction(db.Model):
     amount=db.Column(db.Float, nullable=False)
     date=db.Column(db.Date, nullable=False)
     tag_id=db.Column(db.Integer, db.ForeignKey('tags.id'))
+    user = db.relationship('User', back_populates='transactions', lazy =True)

@@ -9,3 +9,4 @@ class User(db.Model):
     age=db.Column(db.Integer)
     password=db.Column(db.String(120), nullable=False, unique=True)
     savings=db.relationship('Saving', back_populates='user_id', lazy=True)
+    transactions=db.relationship('Transaction', back_populates='user_id', lazy=True)
