@@ -5,17 +5,17 @@ class SavingsController:
 
 # get all
     @classmethod
-    def get_all(cls):
+    def get_all_savings(cls):
         return Saving.query.all()
 
 # get 1
     @classmethod
-    def get_one(cls, id):
+    def get_saving(cls, id):
         return Saving.query.get(id)
 # update
     @classmethod
-    def update(cls, saving_id, data):
-        saving = cls.get_one(saving_id=id)
+    def update_saving(cls, saving_id, data):
+        saving = cls.get_saving(saving_id=id)
         if saving:
             saving.title = data.get('title', saving.title)
             saving.goal = data.get('goal', saving.goal)
@@ -27,14 +27,14 @@ class SavingsController:
         
 # add
     @classmethod
-    def add(cls, data):
+    def add_saving(cls, data):
         new_savings = Saving(**data)
         db.session.add(new_savings)
         db.session.commit()
 # delete
     @classmethod
-    def delete(cls, saving_id):
-        saving = cls.get_one(saving_id=id)
+    def delete_saving(cls, saving_id):
+        saving = cls.get_saving(saving_id=id)
         if saving:
             db.session.delete(saving)
             db.session.commit()

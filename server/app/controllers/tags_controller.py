@@ -4,7 +4,7 @@ from app.models.tags import Tag
 class TagController:
 # add
     @classmethod
-    def add(cls, data):
+    def add_tag(cls, data):
         new_tag = Tag(**data)
         db.session.add(new_tag)
         db.session.commit()
@@ -12,23 +12,25 @@ class TagController:
 
 # get all
     @classmethod
-    def get_all(cls):
+    def get_all_tags(cls):
         return Tag.query.all()
 # get 1
     @classmethod
-    def get_one(cls, id):
+    def get_tag(cls, id):
         return Tag.query.get(id)
 # delete
     @classmethod
-    def delete(cls, tag_id):
-        tag = cls.get_one(tag_id=id)
+    def delete_tag(cls, tag_id):
+        tag = cls.tag(tag_id=id)
         if tag:
             db.session.delete(tag)
             db.session.commit()
         return None
 # update/edit
     @classmethod
-    def update(cls, tag_id, data):
-        tag= cls.get_one(tag_id=id)
+    def update_tag(cls, tag_id, data):
+        tag= cls.get_tag(tag_id=id)
         if tag:
             tag.name= data.get('name', tag.name)
+            db.session.commit()
+        return None
