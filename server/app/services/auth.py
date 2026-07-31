@@ -1,4 +1,3 @@
-from werkzeug.security import generate_password_hash, check_password_hash
 from flask_jwt_extended import create_access_token
 from flask import jsonify
 
@@ -10,7 +9,7 @@ class AuthService:
 # register new_user
     @classmethod
     def register_user(cls):
-        pass
+        return 
 
 # authenticate user
     @classmethod
@@ -23,15 +22,3 @@ class AuthService:
             })
             return jsonify({'message': 'Login successful', 'token': token}), 200
         return jsonify({'message': 'Invalid email or password'}), 401
-
-# set password
-    @classmethod
-    def set_password(cls, user, password):
-        hashed_password = generate_password_hash(password)
-        user.password = hashed_password
-        db.session.commit()
-
-# check password
-    @classmethod
-    def check_password(cls, user, password):
-        return check_password_hash(user.password, password)
