@@ -42,9 +42,16 @@ The backend models in `server/app/models/` provide the foundation for the applic
 | Model | Purpose | Current fields |
 | --- | --- | --- |
 | `User` | Stores account information for each person using the application. | `id`, `name`, `email`, `age`, `password` |
-| `Transaction` | Stores an individual financial record owned by a user. | `id`, `name`, `user_id`, `amount`, `date`, `tag_id` |
-| `Tag` | Groups transactions for analysis, such as Food, Transport, Salary, or Rent. | `id`, `name` |
+| `Transaction` | Stores an individual financial record owned by a user. | `id`, `name`, `user_id`, `amount`, `date` |
+| `Tag` | Groups transactions for analysis, such as Salary, Groceries, Rent, Medical, or Transfer. | `id`, `name` |
 | `Saving` | Stores a savings target belonging to a user. | `id`, `title`, `goal`, `start_date`, `goal_date`, `user_id` |
+
+### Current database relationships
+
+- A `User` can own many `Transaction` records.
+- A `User` can have many `Saving` goals.
+- A `Transaction` can be associated with many `Tag` values through a join table.
+- A `Tag` can be attached to many `Transaction` records.
 
 ### Entity relationship diagram
 
@@ -87,17 +94,17 @@ erDiagram
   }
 ```
 
-### Model improvements needed for the full dashboard
+### Recent backend changes
 
-To accurately show cash inflow and outflow, the `Transaction` model should include a `type` field, such as `income` or `expense`. The dashboard can then calculate:
+The backend has evolved beyond the original single-tag assumption. The latest changes include:
 
-```text
-total income   = sum of income transactions
-total expenses = sum of expense transactions
-net cash flow  = total income - total expenses
-```
+- Added proper SQLAlchemy relationships between `User`, `Saving`, `Transaction`, and `Tag`.
+- Switched transaction tags to a many-to-many association so a transaction can carry multiple tags.
+- Added Flask-Migrate support and applied database revisions for the updated schema.
+- Added a seed script at `server/seed.py` that populates the database with sample users, savings goals, tags, and transactions.
+- Updated the Flask API structure so the routes and controllers align with the current model design.
 
-Savings goals also need either a `current_amount` field or linked savings contributions so the application can calculate a percentage complete. Passwords should be stored as secure hashes, never as plain text, and should not be unique across users.
+These changes make the app better suited for a financial tracker because tags can now represent either payment modes or transaction categories such as business, groceries, home appliances, dining, rent, and transfer.
 
 ## Project structure
 
@@ -190,6 +197,18 @@ cd server
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+```
+
+Create and apply the database migrations:
+
+```bash
+flask db upgrade head
+```
+
+Seed the database with sample data:
+
+```bash
+python seed.py
 ```
 
 Start the Flask server:
