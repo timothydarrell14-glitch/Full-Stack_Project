@@ -8,10 +8,10 @@ tags_bp = Blueprint('tags', __name__, url_prefix='/tags')
 
 ## CRUD operations
 # Get 1
-@tags_bp.route('/<int:id>', methods=['GET'])
+@tags_bp.route('/<int:tag_id>', methods=['GET'])
 @jwt_required()
-def get_tag(id):
-    tag = TagsController.get_tag(id)
+def get_tag(tag_id):
+    tag = TagsController.get_tag(tag_id)
     if tag is None:
         return jsonify({'message': 'Tag not found'}), 404
     return jsonify(TagSchema().dump(tag)), 200
@@ -27,14 +27,22 @@ def get_all_tags():
 @tags_bp.route('', methods=['POST'])
 @jwt_required()
 def add_tag():
-    new_tag = TagsController.add_tag(request.json)
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({'message': 'Request body must be a JSON object'}), 400
+
+    new_tag = TagsController.add_tag(payload)
     return jsonify(TagSchema().dump(new_tag)), 201
 
 # Update
 @tags_bp.route('/<int:tag_id>', methods=['PUT'])
 @jwt_required()
 def update_tag(tag_id):
-    updated_tag = TagsController.update_tag(tag_id, request.json)
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({'message': 'Request body must be a JSON object'}), 400
+
+    updated_tag = TagsController.update_tag(tag_id, payload)
     if updated_tag is None:
         return jsonify({'message': 'Tag not found'}), 404
     return jsonify(TagSchema().dump(updated_tag)), 200

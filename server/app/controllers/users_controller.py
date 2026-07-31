@@ -10,11 +10,11 @@ class UserController:
     def add_user(cls, data):
         payload = UserCreateSchema().load(data or {})
         new_user = User(
-            name=payload.get('name'),
-            email=payload.get('email'),
-            age=payload.get('age'),
+            name=payload.name,
+            email=payload.email,
+            age=payload.age,
         )
-        new_user.set_password(payload['password'])
+        new_user.set_password(payload.password)
         db.session.add(new_user)
         db.session.commit()
         return new_user
@@ -43,14 +43,14 @@ class UserController:
             return None
 
         payload = UserSchema(partial=True).load(data or {})
-        if 'name' in payload:
-            user.name = payload['name']
-        if 'email' in payload:
-            user.email = payload['email']
-        if 'age' in payload:
-            user.age = payload['age']
-        if 'password' in payload and payload['password']:
-            user.set_password(payload['password'])
+        if hasattr(payload, 'name'):
+            user.name = payload.name
+        if hasattr(payload, 'email'):
+            user.email = payload.email
+        if hasattr(payload, 'age'):
+            user.age = payload.age
+        if hasattr(payload, 'password') and payload.password:
+            user.set_password(payload.password)
 
         db.session.commit()
         return user

@@ -103,6 +103,11 @@ The backend has evolved beyond the original single-tag assumption. The latest ch
 - Added Flask-Migrate support and applied database revisions for the updated schema.
 - Added a seed script at `server/seed.py` that populates the database with sample users, savings goals, tags, and transactions.
 - Updated the Flask API structure so the routes and controllers align with the current model design.
+- Hardened route request handling for transactions, savings, and tags so malformed JSON payloads return 400 responses instead of causing server errors.
+- Standardized list responses for transactions, savings, and users to include both resource data and pagination metadata.
+- Added date normalization in transaction and savings controllers so API date strings are converted to Python date objects before persistence.
+- Switched Flask configuration to support environment-driven values for database URL and JWT secret key.
+- Added route-level regression tests for transaction creation, savings creation, and user creation.
 
 These changes make the app better suited for a financial tracker because tags can now represent either payment modes or transaction categories such as business, groceries, home appliances, dining, rent, and transfer.
 
@@ -219,7 +224,17 @@ python app.py
 
 ## Configuration
 
-The current Flask configuration in `server/app.py` uses SQLite and JWT authentication. Before production deployment, move sensitive settings out of source code and provide them as environment variables:
+The current Flask configuration in `server/app/__init__.py` uses SQLite and JWT authentication with environment-variable overrides. The example values are documented in `server/.env.example`.
+
+Current variables:
+
+```text
+API_URL=http://localhost:5000/api
+DATABASE_URL=sqlite:///app.db
+JWT_SECRET_KEY=<set a long random value>
+```
+
+Before production deployment, provide secure environment values:
 
 ```text
 DATABASE_URL=<production database connection string>
@@ -227,6 +242,20 @@ JWT_SECRET_KEY=<long random secret>
 CLIENT_URL=<frontend URL>
 GOOGLE_CLIENT_ID=<optional, for Google sign-in>
 ```
+
+## Schema strategy
+
+The `User` model has both `UserSchema` and `UserCreateSchema` because creation requires stricter validation (`password` is required at creation time but optional for partial updates).
+
+The other models (`Transaction`, `Saving`, `Tag`) do not currently require separate `CreateSchema` classes because create and update payload rules are still effectively the same in the current implementation. If creation-only constraints are introduced later (for example, required fields on create that become optional on update), adding dedicated `TransactionCreateSchema`, `SavingCreateSchema`, and `TagCreateSchema` would be the recommended next step.
+
+## Backend verification tests
+
+Route regression tests are currently implemented in `server/tests/test_routes.py` and cover:
+
+- Transaction creation with date strings
+- Savings creation with date strings
+- User creation flow
 
 ## Planned API capabilities
 

@@ -8,10 +8,10 @@ transactions_bp = Blueprint('transactions', __name__, url_prefix='/transactions'
 
 ## CRUD operations
 # Get 1
-@transactions_bp.route('/<int:id>', methods=['GET'])
+@transactions_bp.route('/<int:transaction_id>', methods=['GET'])
 @jwt_required()
-def get_transaction(id):
-    transaction = TransactionController.get_transaction(id)
+def get_transaction(transaction_id):
+    transaction = TransactionController.get_transaction(transaction_id)
     if transaction is None:
         return jsonify({'message': 'Transaction not found'}), 404
     return jsonify(transaction_schema.dump(transaction)), 200
@@ -20,30 +20,44 @@ def get_transaction(id):
 @transactions_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_transactions():
-    transactions = TransactionController.get_all_transactions()
-    return jsonify(transactions_schema.dump(transactions)), 200
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 10, type=int)
+    result = TransactionController.get_all_transactions(page=page, per_page=per_page)
+    return jsonify({
+        'transactions': transactions_schema.dump(result['items']),
+        'pagination': result['pagination'],
+    }), 200
+
 
 # Create
 @transactions_bp.route('', methods=['POST'])
 @jwt_required()
 def create_transaction():
-    transaction = TransactionController.add_transaction(request.json)
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({'message': 'Request body must be a JSON object'}), 400
+
+    transaction = TransactionController.add_transaction(payload)
     return jsonify(transaction_schema.dump(transaction)), 201
 
 # Update
-@transactions_bp.route('/<int:id>', methods=['PUT'])
+@transactions_bp.route('/<int:transaction_id>', methods=['PUT'])
 @jwt_required()
-def update_transaction(id):
-    transaction = TransactionController.update_transaction(id, request.json)
+def update_transaction(transaction_id):
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({'message': 'Request body must be a JSON object'}), 400
+
+    transaction = TransactionController.update_transaction(transaction_id, payload)
     if transaction is None:
         return jsonify({'message': 'Transaction not found'}), 404
     return jsonify(transaction_schema.dump(transaction)), 200
 
 # Delete
-@transactions_bp.route('/<int:id>', methods=['DELETE'])
+@transactions_bp.route('/<int:transaction_id>', methods=['DELETE'])
 @jwt_required()
-def delete_transaction(id):
-    transaction = TransactionController.delete_transaction(id)
+def delete_transaction(transaction_id):
+    transaction = TransactionController.delete_transaction(transaction_id)
     if transaction is None:
         return jsonify({'message': 'Transaction not found'}), 404
     return jsonify({'message': 'Transaction deleted successfully'}), 200
