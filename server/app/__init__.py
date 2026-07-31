@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
+from flask import Flask
 from app.extensions import db, ma, jwt, cors
 from flask_migrate import Migrate
-from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
 migrate = Migrate()
 
@@ -20,8 +19,18 @@ def create_app():
     migrate.init_app(app, db)
 
     # import blueprints
+    from app.routes.users import users_bp
+    from app.routes.login import login_bp
+    from app.routes.savings import savings_bp
+    from app.routes.transactions import transactions_bp
+    from app.routes.tags import tags_bp
 
     # register blueprints app.register_blueprint(bp, url_prefix="")
+    app.register_blueprint(users_bp, url_prefix="/users")
+    app.register_blueprint(login_bp, url_prefix="/login")
+    app.register_blueprint(savings_bp, url_prefix="/savings")
+    app.register_blueprint(transactions_bp, url_prefix="/transactions")
+    app.register_blueprint(tags_bp, url_prefix="/tags")
 
     return app
 

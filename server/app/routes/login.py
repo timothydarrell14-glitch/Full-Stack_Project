@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from app.controllers.users_controller import UserController
+from app.services.auth import AuthService
 
 login_bp = Blueprint('login', __name__, url_prefix='/login')
 
@@ -13,4 +13,4 @@ def login():
     if not email or not password:
         return jsonify({'message': 'Email and password are required'}), 400
 
-    return UserController.authenticate_user(email, password)
+    return AuthService.authenticate_user(email, password)
