@@ -1,32 +1,35 @@
 from app.extensions import db
 from app.models import User
+from app.schemas.users_schema import UserCreateSchema, UserSchema
 from app.services.paginate import paginate
 
-from flask import request
 
 class UserController:
 # add
     @classmethod
     def add_user(cls, data):
-        new_user = User(**data)
-        new_user.set_password(data['password'])
+        payload = UserCreateSchema().load(data or {})
+        new_user = User(
+            name=payload.get('name'),
+            email=payload.get('email'),
+            age=payload.get('age'),
+        )
+        new_user.set_password(payload['password'])
         db.session.add(new_user)
         db.session.commit()
         return new_user
 # get all
     @classmethod
-    def get_all_users(cls):
-        page = request.args.get('page', 1, type=int)
-        per_page = request.args.get('per_page', 10, type=int)
+    def get_all_users(cls, page=1, per_page=10):
         return paginate(User, page, per_page)
 # get 1
     @classmethod
-    def get_user(cls, id):
-        return User.query.get(id)
-# delete
+    def get_user(cls, user_id):
+        return User.query.get(user_id)
+
     @classmethod
-    def delete_user(cls, id):
-        user = cls.get_user(id)
+    def delete_user(cls, user_id):
+        user = cls.get_user(user_id)
         if user:
             db.session.delete(user)
             db.session.commit()
@@ -34,12 +37,20 @@ class UserController:
         return None
 # update/edit
     @classmethod
-    def update_user(cls, id, data):
-        user = cls.get_user(id)
-        ##***age change + password change***##
-        if user:
-            user.name = data.get('name', user.name)
-            user.email = data.get('email', user.email)
-            db.session.commit()
-            return user
-        return None
+    def update_user(cls, user_id, data):
+        user = cls.get_user(user_id)
+        if not user:
+            return None
+
+        payload = UserSchema(partial=True).load(data or {})
+        if 'name' in payload:
+            user.name = payload['name']
+        if 'email' in payload:
+            user.email = payload['email']
+        if 'age' in payload:
+            user.age = payload['age']
+        if 'password' in payload and payload['password']:
+            user.set_password(payload['password'])
+
+        db.session.commit()
+        return user

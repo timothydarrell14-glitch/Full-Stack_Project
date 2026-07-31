@@ -6,7 +6,10 @@ login_bp = Blueprint('login', __name__, url_prefix='/login')
 
 @login_bp.route('', methods=['POST'])
 def login():
-    data = request.get_json()
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({'message': 'Request body must be a JSON object'}), 400
+
     email = data.get('email')
     password = data.get('password')
 
