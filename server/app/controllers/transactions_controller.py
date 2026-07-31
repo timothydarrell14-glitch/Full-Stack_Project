@@ -7,7 +7,7 @@ from flask import request
 class TransactionController:
 # add
     @classmethod
-    def add_transactions(cls, data):
+    def add_transaction(cls, data):
         new_transaction = Transaction(**data)
         db.session.add(new_transaction)
         db.session.commit()
