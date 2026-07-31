@@ -4,7 +4,7 @@ from app.services.auth import AuthService
 
 login_bp = Blueprint('login', __name__, url_prefix='/login')
 
-@login_bp.route('/', methods=['POST'])
+@login_bp.route('', methods=['POST'])
 def login():
     data = request.get_json()
     email = data.get('email')

@@ -25,7 +25,7 @@ class UserController:
         return User.query.get(id)
 # delete
     @classmethod
-    def delete(cls, id):
+    def delete_user(cls, id):
         user = cls.get_user(id)
         if user:
             db.session.delete(user)
@@ -34,9 +34,12 @@ class UserController:
         return None
 # update/edit
     @classmethod
-    def update(cls, id, data):
+    def update_user(cls, id, data):
         user = cls.get_user(id)
         ##***age change + password change***##
         if user:
             user.name = data.get('name', user.name)
             user.email = data.get('email', user.email)
+            db.session.commit()
+            return user
+        return None

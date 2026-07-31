@@ -17,14 +17,14 @@ def get_tag(id):
     return jsonify(TagSchema().dump(tag)), 200
 
 # Get all
-@tags_bp.route('/', methods=['GET'])
+@tags_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_tags():
     tags = TagsController.get_all_tags()
     return jsonify(TagSchema(many=True).dump(tags)), 200
 
 # Post
-@tags_bp.route('/', methods=['POST'])
+@tags_bp.route('', methods=['POST'])
 @jwt_required()
 def add_tag():
     new_tag = TagsController.add_tag(request.json)

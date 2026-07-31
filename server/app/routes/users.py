@@ -17,14 +17,14 @@ def get_user(id):
     return jsonify(user_schema.dump(user)), 200
 
 # Get all
-@users_bp.route('/', methods=['GET'])
+@users_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_users():
     users = UserController.get_all_users()
     return jsonify(users_schema.dump(users)), 200
 
 # Create
-@users_bp.route('/', methods=['POST'])
+@users_bp.route('', methods=['POST'])
 @jwt_required()
 def create_user():
     user = UserController.add_user(request.json)

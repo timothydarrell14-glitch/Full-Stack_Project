@@ -17,14 +17,14 @@ def get_transaction(id):
     return jsonify(transaction_schema.dump(transaction)), 200
 
 # Get all
-@transactions_bp.route('/', methods=['GET'])
+@transactions_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_transactions():
     transactions = TransactionController.get_all_transactions()
     return jsonify(transactions_schema.dump(transactions)), 200
 
 # Create
-@transactions_bp.route('/', methods=['POST'])
+@transactions_bp.route('', methods=['POST'])
 @jwt_required()
 def create_transaction():
     transaction = TransactionController.add_transaction(request.json)

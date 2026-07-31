@@ -19,14 +19,14 @@ def get_saving(id):
     return jsonify(SavingSchema().dump(saving)), 200
 
 # Get all by user
-@savings_bp.route('/', methods=['GET'])
+@savings_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_savings():
     savings = SavingsController.get_all_savings()
     return jsonify(SavingSchema(many=True).dump(savings)), 200
 
 # Post
-@savings_bp.route('/', methods=['POST'])
+@savings_bp.route('', methods=['POST'])
 @jwt_required()
 def add_saving():
     new_saving = SavingsController.add_saving(request.json)

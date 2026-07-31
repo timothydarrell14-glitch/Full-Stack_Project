@@ -40,6 +40,7 @@ class TransactionController:
             transaction.date = data.get('date', transaction.date)
             transaction.tag = data.get('tag', transaction.tag)
             db.session.commit()
+            return transaction
         return None
 # get by user
     @classmethod
