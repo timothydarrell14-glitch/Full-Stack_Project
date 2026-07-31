@@ -10,7 +10,7 @@
 # def get_saving(id):
 
 
-# # Get all
+# # Get all by id
 # # Post
 # # Update
 # # Delete

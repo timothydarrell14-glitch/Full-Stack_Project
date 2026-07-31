@@ -1,5 +1,8 @@
 from app.extensions import db
 from app.models import Transaction
+from app.services.paginate import paginate
+
+from flask import request
 
 class TransactionController:
 # add
@@ -12,7 +15,9 @@ class TransactionController:
 # get all
     @classmethod
     def get_all_transactions(cls):
-        return Transaction.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        return paginate(Transaction, page, per_page)
 # get 1
     @classmethod
     def get_transaction(cls, id):
