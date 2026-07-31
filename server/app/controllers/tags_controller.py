@@ -1,8 +1,9 @@
 from app.extensions import db
 from app.models.tags import Tag
 
-class TagController:
-# add
+
+class TagsController:
+    # add
     @classmethod
     def add_tag(cls, data):
         new_tag = Tag(**data)
@@ -16,12 +17,13 @@ class TagController:
         return Tag.query.all()
 # get 1
     @classmethod
-    def get_tag(cls, id):
-        return Tag.query.get(id)
-# delete
+    def get_tag(cls, tag_id):
+        return Tag.query.get(tag_id)
+
+    # delete
     @classmethod
     def delete_tag(cls, tag_id):
-        tag = cls.tag(tag_id=id)
+        tag = cls.get_tag(tag_id)
         if tag:
             db.session.delete(tag)
             db.session.commit()
@@ -30,8 +32,9 @@ class TagController:
 # update/edit
     @classmethod
     def update_tag(cls, tag_id, data):
-        tag= cls.get_tag(tag_id=id)
+        tag = cls.get_tag(tag_id)
         if tag:
             tag.name= data.get('name', tag.name)
             db.session.commit()
+            return tag
         return None

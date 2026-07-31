@@ -1,4 +1,5 @@
 from app.extensions import db
+from app.models.associations import transactions_tags
 
 from marshmallow import EXCLUDE
 
@@ -9,4 +10,4 @@ class Tag(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    transactions = db.relationship('Transaction', back_populates='tag')
+    transactions = db.relationship('Transaction', secondary=transactions_tags, back_populates='tags')
