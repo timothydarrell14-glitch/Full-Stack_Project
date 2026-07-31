@@ -8,7 +8,7 @@ tags_bp = Blueprint('tags', __name__, url_prefix='/tags')
 
 ## CRUD operations
 # Get 1
-@tags_bp.route('/tags/<int:id>', methods=['GET'])
+@tags_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def get_tag(id):
     tag = TagsController.get_tag(id)
@@ -17,21 +17,21 @@ def get_tag(id):
     return jsonify(TagSchema().dump(tag)), 200
 
 # Get all
-@tags_bp.route('/tags', methods=['GET'])
+@tags_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_all_tags():
     tags = TagsController.get_all_tags()
     return jsonify(TagSchema(many=True).dump(tags)), 200
 
 # Post
-@tags_bp.route('/tags', methods=['POST'])
+@tags_bp.route('/', methods=['POST'])
 @jwt_required()
 def add_tag():
     new_tag = TagsController.add_tag(request.json)
     return jsonify(TagSchema().dump(new_tag)), 201
 
 # Update
-@tags_bp.route('/tags/<int:tag_id>', methods=['PUT'])
+@tags_bp.route('/<int:tag_id>', methods=['PUT'])
 @jwt_required()
 def update_tag(tag_id):
     updated_tag = TagsController.update_tag(tag_id, request.json)
@@ -40,7 +40,7 @@ def update_tag(tag_id):
     return jsonify(TagSchema().dump(updated_tag)), 200
 
 # Delete
-@tags_bp.route('/tags/<int:tag_id>', methods=['DELETE'])
+@tags_bp.route('/<int:tag_id>', methods=['DELETE'])
 @jwt_required()
 def delete_tag(tag_id):
     deleted_tag = TagsController.delete_tag(tag_id)

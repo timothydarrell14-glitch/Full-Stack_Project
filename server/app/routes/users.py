@@ -8,7 +8,7 @@ users_bp = Blueprint('users', __name__, url_prefix='/users')
 
 ### CRUD operations
 # Get 1
-@users_bp.route('/users/<int:id>', methods=['GET'])
+@users_bp.route('/<int:id>', methods=['GET'])
 @jwt_required()
 def get_user(id):
     user = UserController.get_user(id)
@@ -17,21 +17,21 @@ def get_user(id):
     return jsonify(user_schema.dump(user)), 200
 
 # Get all
-@users_bp.route('/users', methods=['GET'])
+@users_bp.route('/', methods=['GET'])
 @jwt_required()
 def get_all_users():
     users = UserController.get_all_users()
     return jsonify(users_schema.dump(users)), 200
 
 # Create
-@users_bp.route('/users', methods=['POST'])
+@users_bp.route('/', methods=['POST'])
 @jwt_required()
 def create_user():
     user = UserController.add_user(request.json)
     return jsonify(user_schema.dump(user)), 201
 
 # Update
-@users_bp.route('/users/<int:id>', methods=['PUT'])
+@users_bp.route('/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_user(id):
     user = UserController.update_user(id, request.json)
@@ -40,7 +40,7 @@ def update_user(id):
     return jsonify(user_schema.dump(user)), 200
 
 # Delete
-@users_bp.route('/users/<int:id>', methods=['DELETE'])
+@users_bp.route('/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_user(id):
     user = UserController.delete_user(id)

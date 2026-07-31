@@ -1,5 +1,8 @@
 from app.extensions import db
 from app.models import User
+from app.services.paginate import paginate
+
+from flask import request
 
 class UserController:
 # add
@@ -13,7 +16,9 @@ class UserController:
 # get all
     @classmethod
     def get_all_users(cls):
-        return User.query.all()
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        return paginate(User, page, per_page)
 # get 1
     @classmethod
     def get_user(cls, id):
