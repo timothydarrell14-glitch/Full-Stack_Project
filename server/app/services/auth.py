@@ -1,16 +1,10 @@
+
 from flask_jwt_extended import create_access_token
 from flask import jsonify
 
 from app.models.users import User
-from app.extensions import db
 
 class AuthService:
-
-# register new_user
-    @classmethod
-    def register_user(cls):
-        return 
-
 # authenticate user
     @classmethod
     def authenticate_user(cls, email, password):

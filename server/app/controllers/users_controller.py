@@ -1,6 +1,5 @@
 from app.extensions import db
 from app.models import User
-from app.services.auth import AuthService
 
 class UserController:
 # add
@@ -8,6 +7,8 @@ class UserController:
     def add_user(cls, data):
         new_user = User(**data)
         new_user.set_password(data['password'])
+        db.session.add(new_user)
+        db.session.commit()
         return new_user
 # get all
     @classmethod

@@ -21,7 +21,6 @@ class User(db.Model):
     # set password
     def set_password(self, password):
         self.password = generate_password_hash(password)
-        db.session.commit()
 
 # check password
     def check_password(self, password):
