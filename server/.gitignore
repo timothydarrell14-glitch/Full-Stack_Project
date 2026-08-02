@@ -19,7 +19,7 @@ instance/
 .idea/
 
 # My_README
-CHANGE_README.md
+CHANGE_README.md/
 
 # Tests
 tests/
