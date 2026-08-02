@@ -16,8 +16,7 @@ class User(db.Model):
     password = db.Column(db.String(120), nullable=False, unique=True)
     savings = db.relationship('Saving', back_populates='user', lazy=True)
     transactions = db.relationship('Transaction', back_populates='user', lazy=True)
-
-    # email validation
+    role = db.Column(db.String, nullable=False)
 
     # set password
     def set_password(self, password):

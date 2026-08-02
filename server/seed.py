@@ -36,7 +36,7 @@ def seed_data():
 
         created_users = []
         for data in users:
-            user = User(name=data["name"], email=data["email"], age=data["age"])
+            user = User(name=data["name"], email=data["email"], age=data["age"], role="client")
             user.set_password(data["password"])
             db.session.add(user)
             created_users.append(user)
