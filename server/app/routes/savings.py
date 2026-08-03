@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app.controllers.savings_controller import SavingsController
 from app.schemas.savings_schema import SavingSchema
@@ -12,7 +12,8 @@ savings_bp = Blueprint('savings', __name__, url_prefix='/savings')
 @savings_bp.route('/<int:saving_id>', methods=['GET'])
 @jwt_required()
 def get_saving(saving_id):
-    saving = SavingsController.get_saving(saving_id)
+    current_user_id = int(get_jwt_identity())
+    saving = SavingsController.get_saving(saving_id, current_user_id)
     if saving is None:
         return jsonify({'message': 'Saving not found'}), 404
     return jsonify(SavingSchema().dump(saving)), 200
@@ -21,9 +22,10 @@ def get_saving(saving_id):
 @savings_bp.route('', methods=['GET'])
 @jwt_required()
 def get_all_savings():
+    current_user_id = int(get_jwt_identity())
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 10, type=int)
-    result = SavingsController.get_all_savings(page=page, per_page=per_page)
+    result = SavingsController.get_all_savings(current_user_id, page=page, per_page=per_page)
     return jsonify({
         'savings': SavingSchema(many=True).dump(result['items']),
         'pagination': result['pagination'],
@@ -34,22 +36,24 @@ def get_all_savings():
 @savings_bp.route('', methods=['POST'])
 @jwt_required()
 def add_saving():
+    current_user_id = int(get_jwt_identity())
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
         return jsonify({'message': 'Request body must be a JSON object'}), 400
 
-    new_saving = SavingsController.add_saving(payload)
+    new_saving = SavingsController.add_saving(current_user_id, payload)
     return jsonify(SavingSchema().dump(new_saving)), 201
 
 # Update
 @savings_bp.route('/<int:saving_id>', methods=['PUT'])
 @jwt_required()
 def update_saving(saving_id):
+    current_user_id = int(get_jwt_identity())
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
         return jsonify({'message': 'Request body must be a JSON object'}), 400
 
-    updated_saving = SavingsController.update_saving(saving_id, payload)
+    updated_saving = SavingsController.update_saving(saving_id, current_user_id, payload)
     if updated_saving is None:
         return jsonify({'message': 'Saving not found'}), 404
     return jsonify(SavingSchema().dump(updated_saving)), 200
@@ -58,7 +62,8 @@ def update_saving(saving_id):
 @savings_bp.route('/<int:saving_id>', methods=['DELETE'])
 @jwt_required()
 def delete_saving(saving_id):
-    deleted_saving = SavingsController.delete_saving(saving_id)
+    current_user_id = int(get_jwt_identity())
+    deleted_saving = SavingsController.delete_saving(saving_id, current_user_id)
     if deleted_saving is None:
         return jsonify({'message': 'Saving not found'}), 404
     return jsonify({'message': 'Saving deleted'}), 200

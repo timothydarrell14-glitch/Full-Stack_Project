@@ -20,16 +20,19 @@ class UserController:
         return new_user
 # get all
     @classmethod
-    def get_all_users(cls, page=1, per_page=10):
-        return paginate(User, page, per_page)
+    def get_all_users(cls, current_user_id, page=1, per_page=10):
+        query = User.query.filter_by(id=current_user_id)
+        return paginate(query, page, per_page)
 # get 1
     @classmethod
-    def get_user(cls, user_id):
+    def get_user(cls, user_id, current_user_id):
+        if user_id != current_user_id:
+            return None
         return User.query.get(user_id)
 
     @classmethod
-    def delete_user(cls, user_id):
-        user = cls.get_user(user_id)
+    def delete_user(cls, user_id, current_user_id):
+        user = cls.get_user(user_id, current_user_id)
         if user:
             db.session.delete(user)
             db.session.commit()
@@ -37,8 +40,8 @@ class UserController:
         return None
 # update/edit
     @classmethod
-    def update_user(cls, user_id, data):
-        user = cls.get_user(user_id)
+    def update_user(cls, user_id, current_user_id, data):
+        user = cls.get_user(user_id, current_user_id)
         if not user:
             return None
 

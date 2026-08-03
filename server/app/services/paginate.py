@@ -1,4 +1,4 @@
-def paginate(model_class, page, per_page):
+def paginate(model_or_query, page, per_page):
     if page is None:
         page = 1
     if per_page is None:
@@ -9,7 +9,11 @@ def paginate(model_class, page, per_page):
     if per_page < 1:
         per_page = 10
 
-    pagination = model_class.query.paginate(page=page, per_page=per_page, error_out=False)
+    query = model_or_query
+    if hasattr(model_or_query, 'query'):
+        query = model_or_query.query
+
+    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
     return {
         'items': pagination.items,
         'pagination': {
