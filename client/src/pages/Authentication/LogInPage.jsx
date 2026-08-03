@@ -1,6 +1,6 @@
 import { FaApple, FaGoogle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
-import '../../styles/LoginPage.css'
+import '../../styles/LogInPage.css'
 
 const metricBars = [26, 42, 64, 86]
 
