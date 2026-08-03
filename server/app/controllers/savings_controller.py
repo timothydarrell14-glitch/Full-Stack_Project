@@ -9,17 +9,18 @@ class SavingsController:
 
 # get all
     @classmethod
-    def get_all_savings(cls, page=1, per_page=10):
-        return paginate(Saving, page, per_page)
+    def get_all_savings(cls, user_id, page=1, per_page=10):
+        query = Saving.query.filter_by(user_id=user_id)
+        return paginate(query, page, per_page)
 
 # get 1
     @classmethod
-    def get_saving(cls, saving_id):
-        return Saving.query.get(saving_id)
+    def get_saving(cls, saving_id, user_id):
+        return Saving.query.filter_by(id=saving_id, user_id=user_id).first()
 
     @classmethod
-    def update_saving(cls, saving_id, data):
-        saving = cls.get_saving(saving_id)
+    def update_saving(cls, saving_id, user_id, data):
+        saving = cls.get_saving(saving_id, user_id)
         if saving:
             payload = dict(data)
             for field in ['goal_date', 'start_date']:
@@ -32,19 +33,20 @@ class SavingsController:
             saving.amount = payload.get('amount', saving.amount)
             saving.goal_date = payload.get('goal_date', saving.goal_date)
             saving.start_date = payload.get('start_date', saving.start_date)
-            saving.user_id = payload.get('user_id', saving.user_id)
+            saving.user_id = user_id
             db.session.commit()
             return saving
         return None
         
 # add
     @classmethod
-    def add_saving(cls, data):
+    def add_saving(cls, user_id, data):
         payload = dict(data)
         for field in ['goal_date', 'start_date']:
             value = payload.get(field)
             if value and not isinstance(value, datetime):
                 payload[field] = datetime.strptime(value, '%Y-%m-%d').date()
+        payload['user_id'] = user_id
 
         new_savings = Saving(**payload)
         db.session.add(new_savings)
@@ -52,8 +54,8 @@ class SavingsController:
         return new_savings
 # delete
     @classmethod
-    def delete_saving(cls, saving_id):
-        saving = cls.get_saving(saving_id)
+    def delete_saving(cls, saving_id, user_id):
+        saving = cls.get_saving(saving_id, user_id)
         if saving:
             db.session.delete(saving)
             db.session.commit()
