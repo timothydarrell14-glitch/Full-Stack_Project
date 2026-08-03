@@ -1,5 +1,6 @@
 import { FaApple, FaGoogle } from 'react-icons/fa'
-import '../../styles/LogInPage.css'
+import { Link } from 'react-router-dom'
+import '../../styles/LoginPage.css'
 
 const metricBars = [26, 42, 64, 86]
 
@@ -12,6 +13,7 @@ function LoginPage() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-form-side">
+          
           <h1>Welcome to EXECUTIVE</h1>
           <p className="login-subtitle">Please sign in to continue to your command center.</p>
 
@@ -51,7 +53,7 @@ function LoginPage() {
           </form>
 
           <p className="signup-copy">
-            Don&apos;t have an account? <button type="button">Sign up</button>
+            Don&apos;t have an account? <Link to="/authentication/signup">Sign up</Link>
           </p>
         </div>
 
