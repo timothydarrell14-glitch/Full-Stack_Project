@@ -52,6 +52,8 @@
 
 body {
   margin: 0;
+  background: var(--page-bg, #090b10);
+  color: var(--text-primary, #f2f5fb);
 }
 
 #root {

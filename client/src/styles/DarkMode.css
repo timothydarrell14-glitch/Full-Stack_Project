@@ -1,0 +1,55 @@
+body.theme-dark {
+	--page-bg: #090b10;
+	--surface-bg: #11141c;
+	--surface-2-bg: #0f131a;
+	--surface-border: #222736;
+	--text-primary: #f2f5fb;
+	--text-secondary: #9da8bd;
+	--text-muted: #5f6880;
+	--link-color: #ff3f7f;
+	--focus-color: #00d9ff;
+	--focus-ring: rgba(0, 217, 255, 0.14);
+	--shadow-elevated: 0 30px 80px rgba(0, 0, 0, 0.5);
+
+	--auth-page-bg: #090b10;
+	--auth-text: #f2f5fb;
+	--auth-panel-bg: #11141c;
+	--auth-panel-border: #222736;
+	--auth-form-bg: #0f131a;
+	--auth-brand: #00dbff;
+	--auth-heading: #f5f8ff;
+	--auth-subtitle: #8490a6;
+	--auth-label: #9da8bd;
+	--auth-control-bg: #121826;
+	--auth-control-border: #2b3244;
+	--auth-control-text: #f5f8ff;
+	--auth-placeholder: #5b657d;
+	--auth-focus: #00d9ff;
+	--auth-focus-ring: rgba(0, 217, 255, 0.14);
+	--auth-muted: #5f6880;
+	--auth-divider: #273042;
+	--auth-link: #ff3f7f;
+	--auth-note-border: #263047;
+	--auth-note-bg: rgba(15, 20, 30, 0.72);
+	--auth-note-text: #ccd5e8;
+	--auth-visual-bg:
+		radial-gradient(circle at 20% 20%, rgba(0, 229, 255, 0.18), transparent 48%),
+		radial-gradient(circle at 80% 75%, rgba(255, 47, 109, 0.15), transparent 50%),
+		#141923;
+	--auth-card-bg: #0f141f;
+	--auth-card-border: #263047;
+	--auth-card-copy: #8a96ac;
+	--auth-card-metric: #f4f7ff;
+	--auth-chart-cool-a: #00d9ff;
+	--auth-chart-cool-b: #5be6ff;
+	--auth-chart-warm-a: #ff2f6d;
+	--auth-chart-warm-b: #ff6e9b;
+	--auth-checkbox-text: #98a4bb;
+	--auth-form-copy: #7e8ba2;
+	--auth-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+
+	--appearance-bg: #121826;
+	--appearance-border: #2b3244;
+	--appearance-text: #d9dfec;
+	--appearance-hover-border: #00d9ff;
+}

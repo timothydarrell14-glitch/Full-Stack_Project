@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import AppearanceButton from '../../components/AppearanceButton'
 import '../../styles/LogInPage.css'
 import '../../styles/SignUpPage.css'
 
@@ -11,6 +12,7 @@ function SignUpPage() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-form-side">
+          <AppearanceButton />
           <p className="login-brand">EXECUTIVE</p>
           <h1>Create your account</h1>
           <p className="login-subtitle">Set up your profile to access your dashboard securely.</p>

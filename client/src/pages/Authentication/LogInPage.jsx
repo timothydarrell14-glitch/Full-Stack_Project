@@ -1,5 +1,6 @@
 import { FaApple, FaGoogle } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
+import AppearanceButton from '../../components/AppearanceButton'
 import '../../styles/LogInPage.css'
 
 const metricBars = [26, 42, 64, 86]
@@ -13,6 +14,7 @@ function LoginPage() {
     <main className="login-page">
       <section className="login-panel">
         <div className="login-form-side">
+          <AppearanceButton />
           
           <h1>Welcome to EXECUTIVE</h1>
           <p className="login-subtitle">Please sign in to continue to your command center.</p>
