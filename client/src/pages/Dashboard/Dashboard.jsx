@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom'
 import SideBar from '../../components/SideBar'
+import '../../styles/Dashboard.css'
 
 function Dashboard() {
   return (
-    <div className="flex min-h-screen bg-[#0a0b0e]">
+    <div className="dashboard-shell">
       <SideBar />
-      <main className="flex-1 overflow-auto">
+      <main className="dashboard-main">
         <Outlet />
       </main>
     </div>
