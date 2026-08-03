@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import '../../styles/LogInPage.css'
 import '../../styles/SignUpPage.css'
 
 function SignUpPage() {
@@ -7,14 +8,14 @@ function SignUpPage() {
   }
 
   return (
-    <main className="signup-page">
-      <section className="signup-panel">
-        <div className="signup-form-side">
-          <p className="signup-brand">EXECUTIVE</p>
+    <main className="login-page">
+      <section className="login-panel">
+        <div className="login-form-side">
+          <p className="login-brand">EXECUTIVE</p>
           <h1>Create your account</h1>
-          <p className="signup-subtitle">Set up your profile to access your dashboard securely.</p>
+          <p className="login-subtitle">Set up your profile to access your dashboard securely.</p>
 
-          <form className="signup-form" onSubmit={handleSubmit}>
+          <form className="login-form signup-form" onSubmit={handleSubmit}>
             <label htmlFor="signup-name">Name</label>
             <input id="signup-name" type="text" placeholder="Enter your name" required />
 
@@ -42,7 +43,7 @@ function SignUpPage() {
           </p>
         </div>
 
-        <aside className="signup-visual-side" aria-hidden="true">
+        <aside className="login-visual-side signup-visual-side" aria-hidden="true">
           <div className="visual-note">
             <p className="note-title">new client onboarding</p>
             <p className="note-copy">Secure profile creation in under one minute.</p>
@@ -50,12 +51,12 @@ function SignUpPage() {
 
           <div className="visual-card signup-info-card">
             <p className="card-metric">4 Steps</p>
-            <ul>
+            <ol className="signup-steps">
               <li>Identity</li>
               <li>Contact</li>
               <li>Age verification</li>
               <li>Access key setup</li>
-            </ul>
+            </ol>
           </div>
         </aside>
       </section>
