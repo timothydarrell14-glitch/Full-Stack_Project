@@ -1,5 +1,7 @@
 import { RiLineChartLine } from 'react-icons/ri'
+import { useMemo, useState } from 'react'
 import DashboardActions from '../../components/DashboardActions'
+import TagFilterBar from '../../components/TagFilterBar'
 import TransactionChart from '../../components/TransactionChart'
 import TransactionRows from '../../components/TransactionRows'
 import { useDashboardData } from './useDashboardData'
@@ -18,10 +20,33 @@ function OverviewPage() {
     error,
     addTransaction,
     addTag,
+    attachTagToTransaction,
     removeTransaction,
   } = useDashboardData()
 
+  const [selectedTagId, setSelectedTagId] = useState('all')
+
   const nowTime = new Date().toUTCString().split(' ')[4]
+
+  const filteredTransactions = useMemo(() => {
+    if (selectedTagId === 'all') {
+      return allTransactions
+    }
+
+    return allTransactions.filter((transaction) =>
+      transaction.tags.some((tag) => tag.id === selectedTagId),
+    )
+  }, [allTransactions, selectedTagId])
+
+  const filteredRecentMonthTransactions = useMemo(() => {
+    if (selectedTagId === 'all') {
+      return recentMonthTransactions
+    }
+
+    return recentMonthTransactions.filter((transaction) =>
+      transaction.tags.some((tag) => tag.id === selectedTagId),
+    )
+  }, [recentMonthTransactions, selectedTagId])
 
   const handleDeleteTransaction = async (transactionId) => {
     const decision = await showConfirmAlert(
@@ -39,6 +64,15 @@ function OverviewPage() {
       await showSuccessAlert('Deleted', 'Transaction removed successfully.')
     } catch (deleteError) {
       await showErrorAlert('Delete failed', deleteError.message || 'Unable to delete transaction.')
+    }
+  }
+
+  const handleAttachTag = async (transactionId, tagId) => {
+    try {
+      await attachTagToTransaction(transactionId, tagId)
+      await showSuccessAlert('Tag added', 'Transaction updated with selected tag.')
+    } catch (updateError) {
+      await showErrorAlert('Tag update failed', updateError.message || 'Unable to update transaction tag.')
     }
   }
 
@@ -96,13 +130,24 @@ function OverviewPage() {
           </div>
         </header>
 
+        <TagFilterBar
+          tags={tags}
+          selectedTagId={selectedTagId}
+          onSelectTag={setSelectedTagId}
+        />
+
         {isLoading ? <p className="panel-state-message">Loading transaction data...</p> : null}
         {!isLoading && error ? <p className="panel-state-message has-error">{error}</p> : null}
 
         {!isLoading && !error ? (
           <>
-            <TransactionChart transactions={recentMonthTransactions} />
-            <TransactionRows transactions={allTransactions} onDelete={handleDeleteTransaction} />
+            <TransactionChart transactions={filteredRecentMonthTransactions} />
+            <TransactionRows
+              transactions={filteredTransactions}
+              tags={tags}
+              onDelete={handleDeleteTransaction}
+              onAttachTag={handleAttachTag}
+            />
           </>
         ) : null}
       </section>

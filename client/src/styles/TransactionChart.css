@@ -1,5 +1,12 @@
-.chart-value-range {
+.chart-month-total {
   margin-top: 10px;
+  color: #d7e0ef;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+}
+
+.chart-value-range {
+  margin-top: 6px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
@@ -21,6 +28,8 @@
   color: #6f7790;
   font-size: 0.7rem;
   text-transform: uppercase;
+  overflow-x: auto;
+  padding-bottom: 2px;
 }
 
 .chart-x-axis span {

@@ -1,7 +1,7 @@
 from datetime import datetime
 
 from app.extensions import db
-from app.models import Transaction
+from app.models import Tag, Transaction
 from app.services.paginate import paginate
 
 
@@ -10,11 +10,16 @@ class TransactionController:
     @classmethod
     def add_transaction(cls, user_id, data):
         payload = dict(data)
+        tag_ids = payload.pop('tag_ids', None)
         if payload.get('date') and not isinstance(payload['date'], datetime):
             payload['date'] = datetime.strptime(payload['date'], '%Y-%m-%d').date()
         payload['user_id'] = user_id
 
         new_transaction = Transaction(**payload)
+        if isinstance(tag_ids, list):
+            normalized_tag_ids = [int(tag_id) for tag_id in tag_ids]
+            new_transaction.tags = Tag.query.filter(Tag.id.in_(normalized_tag_ids)).all() if normalized_tag_ids else []
+
         db.session.add(new_transaction)
         db.session.commit()
         return new_transaction
@@ -42,6 +47,7 @@ class TransactionController:
         transaction = cls.get_transaction(transaction_id, user_id)
         if transaction:
             payload = dict(data)
+            tag_ids = payload.pop('tag_ids', None)
             if payload.get('date') and not isinstance(payload['date'], datetime):
                 payload['date'] = datetime.strptime(payload['date'], '%Y-%m-%d').date()
 
@@ -49,6 +55,11 @@ class TransactionController:
             transaction.amount = payload.get('amount', transaction.amount)
             transaction.date = payload.get('date', transaction.date)
             transaction.user_id = user_id
+
+            if isinstance(tag_ids, list):
+                normalized_tag_ids = [int(tag_id) for tag_id in tag_ids]
+                transaction.tags = Tag.query.filter(Tag.id.in_(normalized_tag_ids)).all() if normalized_tag_ids else []
+
             db.session.commit()
             return transaction
         return None

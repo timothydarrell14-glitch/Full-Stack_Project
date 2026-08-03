@@ -5,6 +5,7 @@ import {
   deleteTransaction,
   getTags,
   getTransactions,
+  updateTransaction,
 } from '../../api/data'
 
 const getMonthKey = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()}`
@@ -12,6 +13,13 @@ const getMonthKey = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()}`
 const parseDate = (value) => {
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? null : parsed
+}
+
+const formatDateForApi = (date) => {
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }
 
 const transactionToPoint = (transaction) => {
@@ -119,6 +127,36 @@ export function useDashboardData() {
     return response
   }, [])
 
+  const attachTagToTransaction = useCallback(async (transactionId, tagId) => {
+    const transaction = transactions.find((entry) => entry.id === transactionId)
+    if (!transaction) {
+      return null
+    }
+
+    const existingTagIds = transaction.tags.map((tag) => tag.id)
+    if (existingTagIds.includes(tagId)) {
+      return transaction
+    }
+
+    const payload = {
+      name: transaction.name,
+      amount: transaction.amount,
+      date: formatDateForApi(transaction.date),
+      tag_ids: [...existingTagIds, tagId],
+    }
+
+    const response = await updateTransaction(transactionId, payload)
+    const parsed = transactionToPoint(response)
+    if (parsed) {
+      setTransactions((current) =>
+        current
+          .map((entry) => (entry.id === transactionId ? parsed : entry))
+          .sort((a, b) => b.date - a.date),
+      )
+    }
+    return parsed
+  }, [transactions])
+
   return {
     tags,
     allTransactions: transactions,
@@ -128,6 +166,7 @@ export function useDashboardData() {
     error,
     addTransaction,
     addTag,
+    attachTagToTransaction,
     removeTransaction,
     reload: loadDashboardData,
   }

@@ -1,11 +1,30 @@
+import { useState } from 'react'
 import '../styles/TransactionRows.css'
 
 const asCurrency = (amount) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount || 0))
 
-function TransactionRows({ transactions, onDelete }) {
+function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
+  const [selectedTagByTransaction, setSelectedTagByTransaction] = useState({})
+  const [savingTransactionId, setSavingTransactionId] = useState(null)
+
   if (!transactions.length) {
     return <p className="transactions-empty">No transaction records available.</p>
+  }
+
+  const handleAddTag = async (transactionId) => {
+    const selectedTagId = selectedTagByTransaction[transactionId]
+    if (!selectedTagId) {
+      return
+    }
+
+    setSavingTransactionId(transactionId)
+    try {
+      await onAttachTag(transactionId, Number(selectedTagId))
+      setSelectedTagByTransaction((current) => ({ ...current, [transactionId]: '' }))
+    } finally {
+      setSavingTransactionId(null)
+    }
   }
 
   return (
@@ -14,7 +33,8 @@ function TransactionRows({ transactions, onDelete }) {
         <p role="columnheader">DATE</p>
         <p role="columnheader">DESCRIPTION</p>
         <p role="columnheader">AMOUNT</p>
-        <p role="columnheader">ACTION</p>
+        <p role="columnheader">TAGS</p>
+        <p role="columnheader">ACTIONS</p>
       </div>
 
       <div className="transactions-body" role="rowgroup">
@@ -32,6 +52,41 @@ function TransactionRows({ transactions, onDelete }) {
             <p role="cell" className="transaction-amount">
               {asCurrency(transaction.amount)}
             </p>
+
+            <p role="cell">
+              <span className="transaction-tags-readonly">
+                {transaction.tags.length
+                  ? transaction.tags.map((tag) => tag.name).join(' · ')
+                  : 'No tags'}
+              </span>
+              <span className="tag-edit-controls">
+                <select
+                  value={selectedTagByTransaction[transaction.id] || ''}
+                  onChange={(event) =>
+                    setSelectedTagByTransaction((current) => ({
+                      ...current,
+                      [transaction.id]: event.target.value,
+                    }))
+                  }
+                >
+                  <option value="">Select tag</option>
+                  {tags.map((tag) => (
+                    <option key={tag.id} value={tag.id}>
+                      {tag.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  className="row-action-button"
+                  onClick={() => handleAddTag(transaction.id)}
+                  disabled={!selectedTagByTransaction[transaction.id] || savingTransactionId === transaction.id}
+                >
+                  {savingTransactionId === transaction.id ? 'Saving...' : 'Add tag'}
+                </button>
+              </span>
+            </p>
+
             <p role="cell">
               <button
                 type="button"

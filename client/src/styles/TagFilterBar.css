@@ -1,0 +1,29 @@
+.tag-filter-bar {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag-filter-chip {
+  border: 1px solid #2a3346;
+  background: #131927;
+  color: #8896b3;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tag-filter-chip:hover {
+  border-color: #4a5a77;
+  color: #c1cbdf;
+}
+
+.tag-filter-chip.is-active {
+  border-color: #00d8f9;
+  color: #00e5ff;
+  background: #0f2633;
+}
