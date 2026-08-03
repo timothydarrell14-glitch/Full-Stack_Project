@@ -1,0 +1,33 @@
+.appearance-button {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  border: 1px solid var(--appearance-border, #2b3244);
+  background: var(--appearance-bg, #121826);
+  color: var(--appearance-text, #d9dfec);
+  border-radius: 999px;
+  height: 34px;
+  padding: 0 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.appearance-button:hover {
+  border-color: var(--appearance-hover-border, #00d9ff);
+  transform: translateY(-1px);
+}
+
+.appearance-button:focus-visible {
+  outline: 2px solid var(--focus-color, #00d9ff);
+  outline-offset: 2px;
+}
+
+@media (max-width: 560px) {
+  .appearance-button {
+    top: 12px;
+    right: 12px;
+  }
+}

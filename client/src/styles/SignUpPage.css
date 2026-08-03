@@ -1,0 +1,86 @@
+.signup-form {
+    margin-top: 8px;
+    gap: 12px;
+  }
+  
+  .signup-form input[type='text'],
+  .signup-form input[type='email'],
+  .signup-form input[type='date'],
+  .signup-form input[type='password'] {
+    height: 46px;
+    border-radius: 10px;
+    border: 1px solid var(--auth-control-border, #2b3244);
+    background: var(--auth-control-bg, #121826);
+    padding: 0 14px;
+    color: var(--auth-control-text, #f5f8ff);
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .signup-form input[type='text']::placeholder,
+  .signup-form input[type='email']::placeholder,
+  .signup-form input[type='password']::placeholder {
+    color: var(--auth-placeholder, #5b657d);
+  }
+  
+  .signup-form input:focus {
+    border-color: var(--auth-focus, #00d9ff);
+    box-shadow: 0 0 0 3px var(--auth-focus-ring, rgba(0, 217, 255, 0.14));
+  }
+  
+  .signup-visual-side {
+    background: var(--auth-visual-bg,
+      radial-gradient(circle at 22% 22%, rgba(0, 229, 255, 0.2), transparent 42%),
+      radial-gradient(circle at 72% 78%, rgba(255, 47, 109, 0.2), transparent 50%),
+      #131824);
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .signup-info-card {
+    width: min(420px, 100%);
+  }
+  
+  .signup-info-card .card-metric {
+    margin-bottom: 18px;
+  }
+  
+  .signup-steps {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: signup-steps;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .signup-steps li {
+    counter-increment: signup-steps;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--auth-note-text, #b8c4da);
+    font-size: 1.05rem;
+  }
+  
+  .signup-steps li::before {
+    content: counter(signup-steps);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 1px solid var(--auth-card-border, #2e3a56);
+    color: var(--auth-brand, #00dbff);
+    display: grid;
+    place-items: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  
+  @media (max-width: 980px) {
+    .signup-visual-side {
+      justify-content: flex-start;
+    }
+  }
+  
