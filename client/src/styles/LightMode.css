@@ -1,0 +1,55 @@
+body.theme-light {
+	--page-bg: #f4f7fb;
+	--surface-bg: #ffffff;
+	--surface-2-bg: #f9fbff;
+	--surface-border: #d9e1ec;
+	--text-primary: #111827;
+	--text-secondary: #42526a;
+	--text-muted: #66778f;
+	--link-color: #d13a6f;
+	--focus-color: #0a84ff;
+	--focus-ring: rgba(10, 132, 255, 0.2);
+	--shadow-elevated: 0 24px 70px rgba(11, 27, 48, 0.12);
+
+	--auth-page-bg: #f4f7fb;
+	--auth-text: #111827;
+	--auth-panel-bg: #ffffff;
+	--auth-panel-border: #d9e1ec;
+	--auth-form-bg: #f9fbff;
+	--auth-brand: #0566c7;
+	--auth-heading: #0b1b30;
+	--auth-subtitle: #4f5f78;
+	--auth-label: #42526a;
+	--auth-control-bg: #ffffff;
+	--auth-control-border: #bfd0e4;
+	--auth-control-text: #0f172a;
+	--auth-placeholder: #7b8aa4;
+	--auth-focus: #0a84ff;
+	--auth-focus-ring: rgba(10, 132, 255, 0.2);
+	--auth-muted: #66778f;
+	--auth-divider: #d2dcea;
+	--auth-link: #d13a6f;
+	--auth-note-border: #c8d5e5;
+	--auth-note-bg: rgba(255, 255, 255, 0.82);
+	--auth-note-text: #1d2c41;
+	--auth-visual-bg:
+		radial-gradient(circle at 18% 20%, rgba(10, 132, 255, 0.2), transparent 50%),
+		radial-gradient(circle at 82% 78%, rgba(224, 65, 118, 0.18), transparent 50%),
+		#eef3fa;
+	--auth-card-bg: #ffffff;
+	--auth-card-border: #c8d5e5;
+	--auth-card-copy: #4f6078;
+	--auth-card-metric: #0d223c;
+	--auth-chart-cool-a: #0a84ff;
+	--auth-chart-cool-b: #5ab3ff;
+	--auth-chart-warm-a: #e04176;
+	--auth-chart-warm-b: #ff83a8;
+	--auth-checkbox-text: #4b5c76;
+	--auth-form-copy: #50637f;
+	--auth-shadow: 0 24px 70px rgba(11, 27, 48, 0.12);
+
+	--appearance-bg: #ffffff;
+	--appearance-border: #bfd0e4;
+	--appearance-text: #243851;
+	--appearance-hover-border: #0a84ff;
+}
