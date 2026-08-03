@@ -1,4 +1,5 @@
 import { useContext } from 'react'
+import { RiMoonClearLine, RiSunLine } from 'react-icons/ri'
 import ThemeContext from '../context/Theme/ThemeContext'
 import '../styles/AppearanceButton.css'
 
@@ -13,7 +14,10 @@ function AppearanceButton() {
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
       title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
-      {isDark ? 'Light mode' : 'Dark mode'}
+      <span className="appearance-icon" aria-hidden="true">
+        {isDark ? <RiSunLine /> : <RiMoonClearLine />}
+      </span>
+      <span>{isDark ? 'Light mode' : 'Dark mode'}</span>
     </button>
   )
 }

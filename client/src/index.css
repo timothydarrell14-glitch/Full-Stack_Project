@@ -56,6 +56,10 @@ body {
   color: var(--text-primary, #f2f5fb);
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 #root {
   width: 1126px;
   max-width: 100%;

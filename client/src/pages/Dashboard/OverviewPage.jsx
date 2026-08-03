@@ -1,49 +1,47 @@
-import { RiEyeLine } from 'react-icons/ri'
+import { RiLineChartLine } from 'react-icons/ri'
+import DashboardActions from '../../components/DashboardActions'
+import TransactionChart from '../../components/TransactionChart'
+import TransactionRows from '../../components/TransactionRows'
+import { useDashboardData } from './useDashboardData'
+import { showConfirmAlert, showErrorAlert, showSuccessAlert } from '../../api/alerts'
 
-const metricCards = [
-  {
-    label: 'TOTAL NET WORTH',
-    value: '$12,450,890.00',
-    trend: '+2.4% (30D)',
-    variant: 'neutral',
-    icon: <RiEyeLine aria-hidden="true" />,
-  },
-  {
-    label: 'LIQUID RESERVES',
-    value: '$840,200.50',
-    trend: '14.2% of Total',
-    variant: 'muted',
-  },
-  {
-    label: '30D INBOUND',
-    value: '+$45,200.00',
-    trend: 'Velocity: High',
-    variant: 'income',
-  },
-  {
-    label: '30D BURN RATE',
-    value: '-$12,450.00',
-    trend: '↓ -5% vs Prev',
-    variant: 'expense',
-  },
-]
-
-const accountNodes = [
-  { name: 'CHASE SAPPHIRE RES', subtext: '****4592', amount: '-$4,250.00' },
-  { name: 'SCHWAB BROKERAGE', subtext: '****8812', amount: '$810,400.00' },
-  { name: 'WF CHECKING MAIN', subtext: '****1104', amount: '$25,550.50' },
-  { name: 'KRAKEN COLD', subtext: 'CRYPTO', amount: '$120,500.00' },
-]
-
-const ledgerRows = [
-  { date: '10/24', desc: 'STRIPE+PAYOUT', amount: '+$14,500.00', state: 'income' },
-  { date: '10/24', desc: 'EQUINOX HOLDINGS', amount: '-$350.00', state: 'expense' },
-  { date: '10/23', desc: 'UBER EATS', amount: '-$45.20', state: 'expense' },
-  { date: '10/22', desc: 'AWS EMEA', amount: '-$1,240.00', state: 'expense' },
-  { date: '10/22', desc: 'TRANSFER PENDING', amount: '+$5,000.00', state: 'pending' },
-]
+const formatMoney = (amount) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount || 0))
 
 function OverviewPage() {
+  const {
+    tags,
+    allTransactions,
+    recentMonthTransactions,
+    metrics,
+    isLoading,
+    error,
+    addTransaction,
+    addTag,
+    removeTransaction,
+  } = useDashboardData()
+
+  const nowTime = new Date().toUTCString().split(' ')[4]
+
+  const handleDeleteTransaction = async (transactionId) => {
+    const decision = await showConfirmAlert(
+      'Delete transaction?',
+      'This action cannot be undone.',
+      'Delete',
+    )
+
+    if (!decision.isConfirmed) {
+      return
+    }
+
+    try {
+      await removeTransaction(transactionId)
+      await showSuccessAlert('Deleted', 'Transaction removed successfully.')
+    } catch (deleteError) {
+      await showErrorAlert('Delete failed', deleteError.message || 'Unable to delete transaction.')
+    }
+  }
+
   return (
     <section className="overview-page">
       <header className="overview-header">
@@ -53,103 +51,63 @@ function OverviewPage() {
         </div>
         <div className="overview-status">
           <span className="status-label">STATUS: ONLINE</span>
-          <time className="status-time">07:14:07 UTC</time>
+          <time className="status-time">{nowTime} UTC</time>
         </div>
       </header>
 
-      <section className="metrics-grid" aria-label="KPI cards">
-        {metricCards.map((metric) => (
-          <article key={metric.label} className={`metric-card metric-${metric.variant}`}>
-            <div className="metric-meta-row">
-              <p className="metric-label">{metric.label}</p>
-              {metric.icon ? <span className="metric-icon">{metric.icon}</span> : null}
-            </div>
-            <p className="metric-value">{metric.value}</p>
-            <p className="metric-trend">{metric.trend}</p>
-          </article>
-        ))}
+      <section className="metrics-grid" aria-label="Summary metrics">
+        <article className="metric-card">
+          <div className="metric-meta-row">
+            <p className="metric-label">TOTAL NET FLOW</p>
+            <span className="metric-icon">
+              <RiLineChartLine aria-hidden="true" />
+            </span>
+          </div>
+          <p className="metric-value">{formatMoney(metrics.totalNetWorth)}</p>
+          <p className="metric-trend">Across all loaded transactions</p>
+        </article>
+
+        <article className="metric-card metric-income">
+          <p className="metric-label">LATEST MONTH INBOUND</p>
+          <p className="metric-value">{formatMoney(metrics.inboundTotal)}</p>
+          <p className="metric-trend">Positive cash flow entries</p>
+        </article>
+
+        <article className="metric-card metric-expense">
+          <p className="metric-label">LATEST MONTH BURN</p>
+          <p className="metric-value">{formatMoney(metrics.burnRate)}</p>
+          <p className="metric-trend">Negative cash flow entries</p>
+        </article>
+
+        <article className="metric-card">
+          <p className="metric-label">TRANSACTION COUNT</p>
+          <p className="metric-value">{metrics.transactionCount}</p>
+          <p className="metric-trend">Loaded records</p>
+        </article>
       </section>
 
-      <section className="dashboard-panel chart-panel" aria-label="Cash flow chart">
+      <section className="dashboard-panel chart-panel" aria-label="Transaction chart and rows">
         <header className="panel-header">
-          <h2>CASH FLOW VELOCITY (30D)</h2>
+          <h2>MOST RECENT MONTH TRANSACTIONS</h2>
           <div className="chart-legend">
             <span className="legend-item">
-              <i className="legend-swatch income" aria-hidden="true" />Income
-            </span>
-            <span className="legend-item">
-              <i className="legend-swatch expense" aria-hidden="true" />Expense
+              <i className="legend-swatch income" aria-hidden="true" />Amount trend
             </span>
           </div>
         </header>
 
-        <div className="chart-viewport" role="img" aria-label="Income and expense trend lines">
-          <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="trend-lines" aria-hidden="true">
-            <polyline
-              className="trend-income"
-              points="0,30 10,28 18,32 28,20 38,24 48,16 58,18 68,10 78,12 88,8 100,4"
-            />
-            <polyline
-              className="trend-expense"
-              points="0,35 10,33 18,36 28,34 38,37 48,32 58,33 68,30 78,31 88,28 100,26"
-            />
-          </svg>
-        </div>
+        {isLoading ? <p className="panel-state-message">Loading transaction data...</p> : null}
+        {!isLoading && error ? <p className="panel-state-message has-error">{error}</p> : null}
+
+        {!isLoading && !error ? (
+          <>
+            <TransactionChart transactions={recentMonthTransactions} />
+            <TransactionRows transactions={allTransactions} onDelete={handleDeleteTransaction} />
+          </>
+        ) : null}
       </section>
 
-      <section className="overview-lower-grid" aria-label="Accounts and ledger sections">
-        <article className="dashboard-panel">
-          <header className="panel-header">
-            <h2>ACTIVE NODES (ACCOUNTS)</h2>
-            <button type="button" className="panel-action-link">
-              [ADD NODE]
-            </button>
-          </header>
-
-          <ul className="accounts-list">
-            {accountNodes.map((account) => (
-              <li key={account.name} className="account-row">
-                <div>
-                  <p className="account-name">{account.name}</p>
-                  <p className="account-subtext">{account.subtext}</p>
-                </div>
-                <p className="account-amount">{account.amount}</p>
-              </li>
-            ))}
-          </ul>
-        </article>
-
-        <article className="dashboard-panel">
-          <header className="panel-header">
-            <h2>LEDGER STREAM</h2>
-            <button type="button" className="panel-action-link">
-              [VIEW ALL]
-            </button>
-          </header>
-
-          <div className="ledger-table" role="table" aria-label="Ledger entries">
-            <div className="ledger-head" role="rowgroup">
-              <p role="columnheader">DATE</p>
-              <p role="columnheader">DESC</p>
-              <p role="columnheader">AMT</p>
-            </div>
-
-            <div className="ledger-body" role="rowgroup">
-              {ledgerRows.map((entry) => (
-                <div key={`${entry.date}-${entry.desc}`} className="ledger-row" role="row">
-                  <p role="cell">{entry.date}</p>
-                  <p role="cell" className="ledger-description">
-                    {entry.desc}
-                  </p>
-                  <p role="cell" className={`ledger-amount ${entry.state}`}>
-                    {entry.amount}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </article>
-      </section>
+      <DashboardActions tags={tags} onAddTag={addTag} onAddTransaction={addTransaction} />
     </section>
   )
 }

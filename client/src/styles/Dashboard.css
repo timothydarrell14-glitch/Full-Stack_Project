@@ -12,6 +12,8 @@
 	min-width: 0;
 	padding: 24px 24px 20px;
 	overflow-x: auto;
+	overflow-y: auto;
+	scroll-behavior: smooth;
 }
 
 .dashboard-sidebar {
@@ -20,6 +22,33 @@
 	background: linear-gradient(180deg, #090b10 0%, #07090d 100%);
 	position: sticky;
 	top: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.dashboard-shell.sidebar-collapsed {
+	grid-template-columns: 84px 1fr;
+}
+
+.dashboard-sidebar.is-collapsed .sidebar-brand-copy,
+.dashboard-sidebar.is-collapsed .sidebar-nav-label {
+	display: none;
+}
+
+.dashboard-sidebar.is-collapsed .sidebar-branding {
+	justify-content: center;
+	padding: 12px;
+	gap: 8px;
+}
+
+.dashboard-sidebar.is-collapsed .sidebar-navigation {
+	padding-inline: 8px;
+}
+
+.dashboard-sidebar.is-collapsed .sidebar-nav-item,
+.dashboard-sidebar.is-collapsed .sidebar-logout-button {
+	justify-content: center;
+	padding-inline: 8px;
 }
 
 .sidebar-branding {
@@ -28,6 +57,26 @@
 	gap: 12px;
 	padding: 16px 14px;
 	border-bottom: 1px solid #1a1e27;
+}
+
+.sidebar-collapse-button {
+	margin-left: auto;
+	width: 26px;
+	height: 26px;
+	border: 1px solid #2c3344;
+	border-radius: 4px;
+	background: #121825;
+	color: #9aa4be;
+	font-size: 1rem;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.sidebar-collapse-button:hover {
+	border-color: #00e5ff;
+	color: #00e5ff;
 }
 
 .sidebar-brand-mark {
@@ -72,6 +121,7 @@
 	flex-direction: column;
 	padding: 10px 10px 0;
 	gap: 6px;
+	flex: 1;
 }
 
 .sidebar-nav-item {
@@ -127,6 +177,32 @@
 
 .sidebar-nav-item.is-active .sidebar-nav-icon {
 	color: #00e5ff;
+}
+
+.sidebar-logout-button {
+	margin: 12px 10px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	text-decoration: none;
+	color: #727989;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	padding: 11px 10px;
+	letter-spacing: 0.08em;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	background: transparent;
+	cursor: pointer;
+	transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+}
+
+.sidebar-logout-button:hover {
+	color: #ff7da3;
+	border-color: #ff7da3;
+	background: #1a1118;
 }
 
 .overview-page {
@@ -250,6 +326,16 @@
 	padding: 12px 12px 10px;
 }
 
+.panel-state-message {
+	margin-top: 12px;
+	color: #8a95ac;
+	text-align: left;
+}
+
+.panel-state-message.has-error {
+	color: #ff87a9;
+}
+
 .panel-header {
 	display: flex;
 	justify-content: space-between;
@@ -333,6 +419,27 @@
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 10px;
 	margin-top: 10px;
+}
+
+.dashboard-placeholder-page {
+	margin: 0 auto;
+	width: min(1200px, 100%);
+	text-align: left;
+	border: 1px solid #1f2430;
+	background: #12151c;
+	padding: 20px;
+}
+
+.dashboard-placeholder-page h2 {
+	margin: 0;
+	font-size: 1.1rem;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.dashboard-placeholder-page p {
+	margin-top: 8px;
+	color: #808a9f;
 }
 
 .overview-lower-grid .dashboard-panel {

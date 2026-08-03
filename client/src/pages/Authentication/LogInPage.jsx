@@ -1,13 +1,36 @@
 import { FaApple, FaGoogle } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import AppearanceButton from '../../components/AppearanceButton'
+import { loginUser } from '../../api/user'
+import { saveAuthToken } from '../../api/session'
+import { showErrorAlert, showSuccessAlert } from '../../api/alerts'
 import '../../styles/LogInPage.css'
 
 const metricBars = [26, 42, 64, 86]
 
 function LoginPage() {
-  const handleSubmit = (event) => {
+  const navigate = useNavigate()
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [rememberMe, setRememberMe] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (event) => {
     event.preventDefault()
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await loginUser({ email, password })
+      saveAuthToken(response.token, rememberMe)
+      await showSuccessAlert('Login successful', 'Welcome back to Executive.')
+      navigate('/dashboard', { replace: true })
+    } catch (error) {
+      await showErrorAlert('Login failed', error.message || 'Unable to log in. Please try again.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -34,14 +57,33 @@ function LoginPage() {
 
           <form className="login-form" onSubmit={handleSubmit}>
             <label htmlFor="email">Email</label>
-            <input id="email" type="email" placeholder="Enter your email" required />
+            <input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
 
             <label htmlFor="password">Password</label>
-            <input id="password" type="password" placeholder="Enter your password" required />
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
 
             <div className="form-row">
               <label className="checkbox-row" htmlFor="remember-me">
-                <input id="remember-me" type="checkbox" />
+                <input
+                  id="remember-me"
+                  type="checkbox"
+                  checked={rememberMe}
+                  onChange={(event) => setRememberMe(event.target.checked)}
+                />
                 <span>Remember me</span>
               </label>
               <button type="button" className="text-button">
@@ -49,8 +91,8 @@ function LoginPage() {
               </button>
             </div>
 
-            <button type="submit" className="submit-button">
-              Log in
+            <button type="submit" className="submit-button" disabled={isSubmitting}>
+              {isSubmitting ? 'Logging in...' : 'Log in'}
             </button>
           </form>
 

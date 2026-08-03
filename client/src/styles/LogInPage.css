@@ -109,6 +109,13 @@
   right: 0;
 }
 
+.auth-error-message {
+  margin: 0 0 14px;
+  color: #ff7698;
+  font-size: 0.84rem;
+  text-align: left;
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -185,6 +192,11 @@
   color: var(--auth-form-bg, #0a0f18);
   font-weight: 700;
   cursor: pointer;
+}
+
+.submit-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .signup-copy {

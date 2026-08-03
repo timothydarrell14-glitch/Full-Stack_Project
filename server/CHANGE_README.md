@@ -1,116 +1,243 @@
-# Backend Change Notes
+# Change Ledger
 
-This document summarizes backend-focused changes made during the recent stabilization pass and explains why each change was needed.
+## Detailed Change Log
 
-## Scope
+### Backend: Auth, Access Scope, Validation, API Contracts
 
-The work focused on the Flask backend in `server/`, especially routes, controllers, configuration, and regression tests.
+1. Added strict user email validation at model level
+- File: server/app/models/users.py
+- Added SQLAlchemy validates hook for email normalization and format enforcement.
+- Email is trimmed, lowercased, and regex-validated before persistence.
+- Invalid format now fails early during model assignment, preventing silent bad records.
 
-## Changes and rationale
+2. Added default role value for users
+- File: server/app/models/users.py
+- Added model default for role to reduce creation-time failures when role is omitted.
+- Seed compatibility preserved for explicit role values.
 
-### 1. Route payload validation
+3. Enforced per-user data filtering for protected resources
+- Files:
+  - server/app/routes/users.py
+  - server/app/routes/transactions.py
+  - server/app/routes/savings.py
+  - server/app/controllers/users_controller.py
+  - server/app/controllers/transactions_controller.py
+  - server/app/controllers/savings_controller.py
+- All list/read/update/delete operations now use JWT identity as scope boundary.
+- User, savings, and transactions are retrieved only when ownership matches authenticated identity.
+- Write operations no longer trust inbound user_id for ownership-sensitive records.
 
-Files:
-- `server/app/routes/transactions.py`
-- `server/app/routes/savings.py`
-- `server/app/routes/tags.py`
-- `server/app/routes/users.py`
-- `server/app/routes/login.py`
+4. Normalized create/update ownership behavior
+- Files:
+  - server/app/controllers/transactions_controller.py
+  - server/app/controllers/savings_controller.py
+- user_id is now sourced from authenticated identity for create/update operations.
+- Prevents client-side ownership spoofing in request payloads.
 
-What changed:
-- Routes now use safe JSON parsing and verify request bodies are JSON objects.
-- Invalid payloads now return explicit 400 responses.
+5. Expanded route-level validation and error handling
+- Files:
+  - server/app/routes/users.py
+  - server/app/routes/login.py
+  - server/app/routes/transactions.py
+  - server/app/routes/savings.py
+  - server/app/routes/tags.py
+- Invalid body types (non-object JSON) return clear 400 responses.
+- User create/update routes now catch both schema validation and model validation errors.
 
-Why:
-- Prevent server errors caused by malformed or non-object JSON payloads.
-- Give API clients predictable validation behavior.
+6. Added dedicated public signup endpoint
+- File: server/app/routes/signup.py
+- New POST /signup route supports registration without token.
+- users POST remains protected by jwt_required.
+- Handles validation errors and duplicate-email integrity conflicts.
 
-### 2. Pagination response consistency
+7. Registered signup route in app factory
+- File: server/app/__init__.py
+- Added signup blueprint import and registration.
+- Preserved existing route prefixes and existing protected routes.
 
-Files:
-- `server/app/routes/transactions.py`
-- `server/app/routes/savings.py`
-- `server/app/routes/users.py`
-- `server/app/services/paginate.py`
+8. Improved pagination helper flexibility
+- File: server/app/services/paginate.py
+- paginate now accepts either model classes or already-filtered query objects.
+- Enabled clean integration with identity-filtered query pipelines.
 
-What changed:
-- Collection endpoints now return both data and pagination metadata.
-- Responses align with the paginate helper output shape.
+9. Stabilized Flask route loading after syntax correction
+- File: server/app/routes/users.py
+- Fixed malformed try/except indentation that caused SyntaxError during flask CLI app import.
 
-Why:
-- Avoid schema/payload mismatches.
-- Provide a stable response contract for frontend pagination UI.
+### Frontend: API Integration, Routing, Dashboard, UX, Alerts
 
-### 3. Date normalization for persistence
+10. Added modular API client
+- File: client/src/api/client.js
+- Centralized base URL resolution and HTTP request behavior.
+- Added URL query assembly support.
+- Added robust network-failure messaging with actionable diagnostics.
 
-Files:
-- `server/app/controllers/transactions_controller.py`
-- `server/app/controllers/savings_controller.py`
+11. Added auth token session module
+- File: client/src/api/session.js
+- Added token save/read/clear helpers.
+- Supports remember-me split between localStorage and sessionStorage.
 
-What changed:
-- Date-like string inputs are converted to Python date objects before SQLAlchemy write operations.
+12. Added auth API wrappers
+- File: client/src/api/user.js
+- Added loginUser and createUser request helpers.
+- createUser migrated from protected users route to public signup route.
 
-Why:
-- SQLite date columns reject plain strings for date fields in these code paths.
-- Normalization prevents runtime StatementError exceptions.
+13. Added data API wrappers for CRUD
+- File: client/src/api/data.js
+- Added transaction and tag get/create/update/delete helpers.
+- Standardized client-side API call signatures.
 
-### 4. User schema/controller create-update split
+14. Enabled protected dashboard routing
+- Files:
+  - client/src/App.jsx
+  - client/src/components/ProtectedRoute.jsx
+- Added token-gated route guard around dashboard tree.
+- Root and wildcard redirects now branch by auth state.
 
-Files:
-- `server/app/schemas/users_schema.py`
-- `server/app/controllers/users_controller.py`
+15. Implemented login API flow
+- File: client/src/pages/Authentication/LogInPage.jsx
+- Bound form fields to state.
+- Added submit loading state and remember-me behavior.
+- Added token persistence and redirect to dashboard on success.
 
-What changed:
-- User creation uses `UserCreateSchema` with stricter create-time requirements.
-- User updates continue to allow partial updates.
+16. Implemented signup API flow
+- File: client/src/pages/Authentication/SignUpPage.jsx
+- Bound registration form to state.
+- Added submit loading state.
+- Added redirect to login after successful registration.
 
-Why:
-- Creation and update validation requirements are different.
-- This avoids accidental weak validation for account creation.
+17. Added SweetAlert2 for user feedback
+- Files:
+  - client/src/api/alerts.js
+  - client/src/pages/Authentication/LogInPage.jsx
+  - client/src/pages/Authentication/SignUpPage.jsx
+  - client/src/components/DashboardActions.jsx
+  - client/src/pages/Dashboard/OverviewPage.jsx
+- Added success alerts for login, signup, add-tag, add-transaction, delete-transaction.
+- Added error alerts for auth failures, CRUD failures, and delete failures.
+- Added delete confirmation modal for transaction removal.
 
-### 5. Environment-driven app configuration
+18. Added dashboard data orchestration hook
+- File: client/src/pages/Dashboard/useDashboardData.js
+- Centralized fetch, transform, aggregate, and mutate logic.
+- Added recent-month extraction for chart data.
+- Added derived summary metrics and local optimistic refresh behavior.
 
-Files:
-- `server/app/__init__.py`
-- `server/.env.example`
+19. Added modular chart component
+- File: client/src/components/TransactionChart.jsx
+- Renders trend line from most recent month transaction amounts.
+- Includes axis labels and dynamic range markers.
 
-What changed:
-- App now reads `DATABASE_URL` and `JWT_SECRET_KEY` from environment variables with local defaults.
-- `.env.example` now includes the variables used by the backend.
+20. Added modular transaction rows component
+- File: client/src/components/TransactionRows.jsx
+- Renders complete transaction list below chart.
+- Includes tags, amounts, and delete action control.
 
-Why:
-- Improve security and deployment readiness.
-- Remove hard dependency on in-code configuration values.
+21. Added modular dashboard actions component
+- File: client/src/components/DashboardActions.jsx
+- Added Add Label Tag form mapped to tags POST.
+- Added Add Transaction form mapped to transactions POST.
 
-### 6. Regression tests for critical route flows
+22. Implemented sidebar collapse/expand behavior
+- Files:
+  - client/src/components/SideBar.jsx
+  - client/src/pages/Dashboard/Dashboard.jsx
+  - client/src/styles/Dashboard.css
+- Added collapse toggle control.
+- Added collapsed-state layout behavior to enlarge content area.
+- Added logout action control.
 
-Files:
-- `server/tests/test_routes.py`
+23. Added icon-enhanced appearance button
+- Files:
+  - client/src/components/AppearanceButton.jsx
+  - client/src/styles/AppearanceButton.css
+- Added sun/moon mode iconography and aligned button layout.
 
-What changed:
-- Added tests for creating transactions with date strings.
-- Added tests for creating savings with date strings.
-- Added tests for user creation behavior.
+24. Expanded and modularized styling
+- Files:
+  - client/src/styles/Dashboard.css
+  - client/src/styles/LogInPage.css
+  - client/src/styles/AppearanceButton.css
+  - client/src/styles/TransactionChart.css
+  - client/src/styles/TransactionRows.css
+  - client/src/styles/DashboardActions.css
+- Added responsive layout rules.
+- Added smooth scroll behavior for dashboard content.
+- Added visual states for alerts, buttons, placeholders, and CRUD table actions.
 
-Why:
-- Lock in the fixed behaviors.
-- Catch regressions quickly in future route/controller refactors.
+### Config and Environment
 
-## Verification
+25. Added runtime env usage in backend config path
+- File: server/app/__init__.py
+- Uses DATABASE_URL and JWT_SECRET_KEY with defaults.
 
-Current regression command:
+26. Added env template baseline
+- File: server/.env.example
+- Captures required and optional local runtime settings.
 
-```bash
-cd server
-source .venv/bin/activate
-pytest -q tests/test_routes.py
+## Data Flow Diagram
+
+```mermaid
+flowchart LR
+  A[Client Login Form] --> B[POST /login]
+  B --> C{Credentials Valid}
+  C -- No --> D[Error Alert]
+  C -- Yes --> E[JWT Token]
+  E --> F[Token Storage]
+  F --> G[Protected Dashboard Route]
+  G --> H[GET /transactions]
+  G --> I[GET /tags]
+  H --> J[Recent Month Chart Projection]
+  H --> K[Transaction Rows Projection]
+  I --> L[Tag Count and Label Forms]
+  K --> M[DELETE /transactions/id]
+  L --> N[POST /tags]
+  L --> O[POST /transactions]
 ```
 
-Expected result:
-- All tests pass.
+## Algorithm Diagram
 
-## Follow-up recommendations
+```mermaid
+flowchart TD
+  A[Dashboard Init] --> B[Parallel Fetch Transactions and Tags]
+  B --> C[Normalize Dates and Amounts]
+  C --> D[Sort Transactions by Date Desc]
+  D --> E[Select Latest Month Bucket]
+  E --> F[Generate Chart Point Sequence]
+  D --> G[Compute Metrics: net, inbound, burn, count]
+  D --> H[Render Full Rows]
+  F --> I[Chart Render]
+  G --> I
+  H --> I
+  I --> J[User CRUD Actions]
+  J --> K[API Mutation]
+  K --> L[State Refresh/Mutation]
+  L --> I
+```
 
-1. Add dedicated create/update schemas for `Transaction`, `Saving`, and `Tag` if validation requirements diverge.
-2. Add negative-case tests for malformed dates and missing required fields.
-3. Replace development JWT secret values with long random secrets in real environments.
+## Project Structure Link Diagram
+
+```mermaid
+graph TD
+  A[Full-Stack_Project] --> B[client]
+  A --> C[server]
+  B --> B1[src/api]
+  B --> B2[src/components]
+  B --> B3[src/pages]
+  B --> B4[src/styles]
+  C --> C1[app/routes]
+  C --> C2[app/controllers]
+  C --> C3[app/models]
+  C --> C4[app/schemas]
+  C --> C5[tests]
+```
+
+- [client/src/api](../client/src/api)
+- [client/src/components](../client/src/components)
+- [client/src/pages](../client/src/pages)
+- [client/src/styles](../client/src/styles)
+- [server/app/routes](app/routes)
+- [server/app/controllers](app/controllers)
+- [server/app/models](app/models)
+- [server/app/schemas](app/schemas)
+- [server/tests](tests)

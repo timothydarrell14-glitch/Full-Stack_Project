@@ -1,0 +1,28 @@
+.chart-value-range {
+  margin-top: 10px;
+  margin-bottom: 8px;
+  display: flex;
+  justify-content: space-between;
+  color: #6f7790;
+  font-size: 0.72rem;
+}
+
+.chart-empty {
+  margin-top: 14px;
+  color: #8e96ab;
+  font-size: 0.86rem;
+}
+
+.chart-x-axis {
+  margin-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+  color: #6f7790;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+}
+
+.chart-x-axis span {
+  white-space: nowrap;
+}

@@ -1,0 +1,57 @@
+import { readAuthToken } from './session'
+
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
+
+const buildUrl = (path, params) => {
+  const cleanPath = path.startsWith('/') ? path : `/${path}`
+  const url = new URL(`${API_BASE_URL}${cleanPath}`)
+
+  if (params && typeof params === 'object') {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== '') {
+        url.searchParams.set(key, value)
+      }
+    })
+  }
+
+  return url.toString()
+}
+
+export const apiRequest = async (path, options = {}) => {
+  const { method = 'GET', body, params, token } = options
+  const authToken = token || readAuthToken()
+  const endpoint = buildUrl(path, params)
+
+  let response
+
+  try {
+    response = await fetch(endpoint, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      ...(body ? { body: JSON.stringify(body) } : {}),
+    })
+  } catch (networkError) {
+    const error = new Error(
+      `Unable to reach API at ${API_BASE_URL}. Make sure the server is running and CORS allows this origin.`,
+    )
+    error.status = 0
+    error.cause = networkError
+    throw error
+  }
+
+  const payload = await response.json().catch(() => ({}))
+
+  if (!response.ok) {
+    const message = payload?.message || 'Request failed'
+    const error = new Error(message)
+    error.status = response.status
+    error.payload = payload
+    error.endpoint = endpoint
+    throw error
+  }
+
+  return payload
+}
