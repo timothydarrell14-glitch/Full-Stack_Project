@@ -321,6 +321,27 @@
 	color: #57ff5a;
 }
 
+.metric-net {
+	text-align: center;
+	align-items: center;
+	display: flex;
+	flex-direction: column;
+}
+
+.metric-net .metric-meta-row {
+	width: 100%;
+	justify-content: center;
+}
+
+.metric-net .metric-value {
+	color: #f7c948;
+	text-shadow: 0 0 18px rgba(247, 201, 72, 0.45);
+}
+
+.metric-net .metric-trend {
+	color: #a08c3a;
+}
+
 .chart-panel {
 	margin-top: 10px;
 	padding: 12px 12px 10px;

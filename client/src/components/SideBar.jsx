@@ -3,19 +3,16 @@ import {
   RiArrowLeftSLine,
   RiArrowRightSLine,
   RiDashboardLine,
-  RiFileListLine,
   RiBankLine,
   RiSettings3Line,
-  RiShieldStarLine,
   RiLogoutBoxRLine,
 } from 'react-icons/ri'
 import { clearAuthToken } from '../api/session'
 
 const navItems = [
   { to: '/dashboard', label: 'DASHBOARD', Icon: RiDashboardLine, end: true },
-  { to: '/dashboard/expenses', label: 'LEDGER', Icon: RiFileListLine },
-  { to: '/dashboard/savings', label: 'WEALTH & SAVINGS', Icon: RiBankLine },
-  { to: '/dashboard/settings', label: 'COMMAND CENTER', Icon: RiSettings3Line },
+  { to: '/dashboard/savings', label: 'SAVINGS', Icon: RiBankLine },
+  { to: '/dashboard/settings', label: 'SETTINGS', Icon: RiSettings3Line },
 ]
 
 function SideBar({ collapsed, onToggle }) {

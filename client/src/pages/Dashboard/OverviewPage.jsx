@@ -1,5 +1,5 @@
 import { RiLineChartLine } from 'react-icons/ri'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import DashboardActions from '../../components/DashboardActions'
 import TagFilterBar from '../../components/TagFilterBar'
 import TransactionChart from '../../components/TransactionChart'
@@ -28,7 +28,14 @@ function OverviewPage() {
 
   const [selectedTagId, setSelectedTagId] = useState('all')
 
-  const nowTime = new Date().toUTCString().split(' ')[4]
+  const [nowTime, setNowTime] = useState(() => new Date().toUTCString().split(' ')[4])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNowTime(new Date().toUTCString().split(' ')[4])
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const filteredTransactions = useMemo(() => {
     if (selectedTagId === 'all') {
@@ -99,31 +106,31 @@ function OverviewPage() {
       </header>
 
       <section className="metrics-grid" aria-label="Summary metrics">
-        <article className="metric-card">
+        <article className="metric-card metric-net">
           <div className="metric-meta-row">
-            <p className="metric-label">TOTAL NET FLOW</p>
+            <p className="metric-label">NET FLOW</p>
             <span className="metric-icon">
               <RiLineChartLine aria-hidden="true" />
             </span>
           </div>
           <p className="metric-value">{formatMoney(metrics.totalNetWorth)}</p>
-          <p className="metric-trend">Across all loaded transactions</p>
+          <p className="metric-trend">Income minus expenses</p>
         </article>
 
         <article className="metric-card metric-income">
-          <p className="metric-label">LATEST MONTH INBOUND</p>
+          <p className="metric-label">TOTAL INCOME</p>
           <p className="metric-value">{formatMoney(metrics.inboundTotal)}</p>
-          <p className="metric-trend">Positive cash flow entries</p>
+          <p className="metric-trend">All positive transactions</p>
         </article>
 
         <article className="metric-card metric-expense">
-          <p className="metric-label">LATEST MONTH BURN</p>
-          <p className="metric-value">{formatMoney(metrics.burnRate)}</p>
-          <p className="metric-trend">Negative cash flow entries</p>
+          <p className="metric-label">TOTAL EXPENSES</p>
+          <p className="metric-value">{formatMoney(Math.abs(metrics.burnRate))}</p>
+          <p className="metric-trend">All negative transactions</p>
         </article>
 
         <article className="metric-card">
-          <p className="metric-label">TRANSACTION COUNT</p>
+          <p className="metric-label">TOTAL TRANSACTIONS</p>
           <p className="metric-value">{metrics.transactionCount}</p>
           <p className="metric-trend">Loaded records</p>
         </article>
