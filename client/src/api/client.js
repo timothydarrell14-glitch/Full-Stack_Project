@@ -1,6 +1,6 @@
 import { readAuthToken } from './session'
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000'
+const API_BASE_URL = 'postgresql://full_stack_project_postgres_user:NODHGMSctI5kGsIqaM2YUFWUqKkkE2pX@dpg-d9pefgvlk1mc73dup170-a.oregon-postgres.render.com/full_stack_project_postgres'
 
 const buildUrl = (path, params) => {
   const cleanPath = path.startsWith('/') ? path : `/${path}`
