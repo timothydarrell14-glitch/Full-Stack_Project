@@ -1,6 +1,6 @@
 import { readAuthToken } from './session'
 
-const API_BASE_URL = 'https://full-stack-project-3-m5k7.onrender.com/'
+const API_BASE_URL = 'https://full-stack-project-3-m5k7.onrender.com'
 
 // const buildUrl = (path, params) => {
 //   const cleanPath = path.startsWith('/') ? path : `/${path}`
