@@ -11,4 +11,4 @@
 11. make the website more dynamic(different devices)
 12. structure the bar graph
 13. go through calculations
-14. change db framework, jwt_secret_key
+14. change db framework, jwt_secret_key /-\

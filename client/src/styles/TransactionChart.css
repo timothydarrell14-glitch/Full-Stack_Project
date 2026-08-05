@@ -1,17 +1,16 @@
-.chart-month-total {
-  margin-top: 10px;
-  color: #d7e0ef;
-  font-size: 0.82rem;
-  letter-spacing: 0.04em;
+.chart-container {
+  margin-top: 12px;
+  padding: 16px 8px 8px;
+  background: #0d1017;
+  border-radius: 8px;
+  border: 1px solid #1a2030;
 }
 
-.chart-value-range {
-  margin-top: 6px;
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: space-between;
+.chart-subtitle {
+  margin: 0 0 12px 8px;
   color: #6f7790;
-  font-size: 0.72rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
 }
 
 .chart-empty {
@@ -20,18 +19,3 @@
   font-size: 0.86rem;
 }
 
-.chart-x-axis {
-  margin-top: 8px;
-  display: flex;
-  justify-content: space-between;
-  gap: 4px;
-  color: #6f7790;
-  font-size: 0.7rem;
-  text-transform: uppercase;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-
-.chart-x-axis span {
-  white-space: nowrap;
-}

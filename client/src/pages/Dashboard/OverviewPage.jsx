@@ -122,12 +122,7 @@ function OverviewPage() {
 
       <section className="dashboard-panel chart-panel" aria-label="Transaction chart and rows">
         <header className="panel-header">
-          <h2>MOST RECENT MONTH TRANSACTIONS</h2>
-          <div className="chart-legend">
-            <span className="legend-item">
-              <i className="legend-swatch income" aria-hidden="true" />Amount trend
-            </span>
-          </div>
+          <h2>MOST RECENT MONTH CASH FLOW</h2>
         </header>
 
         <TagFilterBar
