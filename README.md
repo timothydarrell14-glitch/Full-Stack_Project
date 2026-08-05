@@ -2,17 +2,72 @@
 
 ## Functionality
 
-- Account registration via public signup endpoint
-- Secure login with JWT
-- Protected dashboard access
-- Transaction CRUD
-- Tag CRUD
-- Savings CRUD
-- Recent-month transaction charting
-- Full transaction rows under chart
-- Sidebar collapse to expand analysis area
-- Theme toggle with icon states
-- SweetAlert feedback for auth and CRUD actions
+### Authentication
+- Public signup — name, email, age, password; password stored as bcrypt hash
+- Login returns a signed JWT; token persisted in `localStorage` (remember me) or `sessionStorage` (session only)
+- Every protected route and API call requires a valid `Bearer` token
+- Logout clears the token and redirects to the login page
+
+### Dashboard — Overview
+- **Metric cards** (live, update on every data change)
+  - **Net Flow** — monthly income minus total expenses; gold glow indicator
+  - **Total Income** — the monthly income figure set by the user (stored in `localStorage`)
+  - **Total Expenses** — sum of absolute amounts across all loaded transactions
+  - **Total Transactions** — count of loaded records
+- **Live UTC clock** — ticks every second in the page header
+- **Tag filter bar** — filter all data on screen by a single tag
+- **Line chart** — plots all loaded transactions over time:
+  - **Income** — dashed flat reference line at the user's monthly income ceiling (only shown when income is set)
+  - **Expenses** — per-day spending total (fluctuates); rendered in red
+  - **Savings** — `income − cumulative expenses`; rendered in orange (only shown when income is set)
+  - Y-axis anchored to the income value when set
+- **Transaction table** — paginated (10 rows per page with a "Load more" button), columns: date, description, amount (shown as negative), tags, actions
+  - Add a tag to any row via an inline select
+  - Remove any individual tag from a row with an × button
+  - Delete a transaction (confirm dialog)
+
+### Data Actions panel
+- **Monthly Income form** — user sets a single monthly income value; persisted to `localStorage` and immediately reflected in metrics and chart
+- **Add Expense form** — description, amount (always stored as a negative number), optional date, optional tag selection (multi-select chips); posts to `/transactions`
+- **Add Tag form** — creates a named label; displays all existing tags as chips with individual × delete buttons; deletion confirmed before hitting the API
+
+### Sidebar
+- Collapsible — icon-only mode when collapsed
+- Navigation links: Dashboard (Overview), Savings, Settings
+- **Dark / Light mode toggle** — uses the `AppearanceButton` component; writes `theme-dark` or `theme-light` to `body` and persists choice to `localStorage`; all backgrounds, borders, and text colours switch via CSS custom properties
+- Logout button — clears token, redirects to `/authentication/login`
+
+### Auth Pages
+- Login and Signup pages share a split-panel layout (form + animated visual side)
+- `AppearanceButton` is present on both pages (top-right floating pill)
+- Form inputs, placeholders, and focus rings adapt to the active theme via CSS variables
+
+---
+
+### Backend API
+
+All endpoints except `POST /signup` and `POST /login` require `Authorization: Bearer <token>`.
+
+| Resource | Methods | Notes |
+|----------|---------|-------|
+| `/signup` | `POST` | Creates a user; validates email format; hashes password |
+| `/login` | `POST` | Verifies credentials; returns JWT with `id` and `email` claims |
+| `/transactions` | `GET POST` | Scoped to the authenticated user; supports `page` / `per_page` query params |
+| `/transactions/<id>` | `GET PUT DELETE` | Owner-only; `PUT` accepts optional `tag_ids` array to update associations |
+| `/tags` | `GET POST` | Global tag list; readable by any authenticated user |
+| `/tags/<id>` | `GET PUT DELETE` | Full CRUD for individual tags |
+| `/savings` | `GET POST` | Saving goals scoped to the authenticated user; paginated |
+| `/savings/<id>` | `GET PUT DELETE` | Owner-only saving goal management |
+| `/users` | `GET POST` | Authenticated user lookup / creation |
+| `/users/<id>` | `GET PUT DELETE` | Owner-only profile read and update |
+
+**Stack:** Flask · Flask-JWT-Extended · Flask-SQLAlchemy · Flask-Marshmallow · Flask-CORS · Flask-Migrate · SQLite (dev) / configurable via `DATABASE_URL`
+
+**Security:** passwords hashed with Werkzeug (`generate_password_hash` / `check_password_hash`); JWT secret read from `JWT_SECRET_KEY` env variable; CORS restricted to configured origins.
+
+**Transactions ↔ Tags** — many-to-many via a `transactions_tags` association table; tag array updated atomically on every `PUT /transactions/<id>`.
+
+**Pagination** — a shared `paginate()` utility wraps every list query and returns `items` + `{ page, per_page, total, pages, has_next, has_prev }`.
 
 ## How It Works
 
