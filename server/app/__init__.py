@@ -33,13 +33,13 @@ def create_app():
     from app.routes.transactions import transactions_bp
     from app.routes.tags import tags_bp
 
-    # register blueprints app.register_blueprint(bp, url_prefix="")
-    app.register_blueprint(users_bp, url_prefix="/users")
-    app.register_blueprint(login_bp, url_prefix="/login")
-    app.register_blueprint(signup_bp, url_prefix="/signup")
-    app.register_blueprint(savings_bp, url_prefix="/savings")
-    app.register_blueprint(transactions_bp, url_prefix="/transactions")
-    app.register_blueprint(tags_bp, url_prefix="/tags")
+    # register blueprints
+    app.register_blueprint(users_bp)
+    app.register_blueprint(login_bp)
+    app.register_blueprint(signup_bp)
+    app.register_blueprint(savings_bp)
+    app.register_blueprint(transactions_bp)
+    app.register_blueprint(tags_bp)
 
     @app.route('/')
     def home():
