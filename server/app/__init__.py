@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from app.extensions import db, ma, jwt, cors
+from app.extensions import db, ma, jwt
 from flask_migrate import Migrate
 from flask_cors import CORS
 
