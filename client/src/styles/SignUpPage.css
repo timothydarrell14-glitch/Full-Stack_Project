@@ -6,6 +6,7 @@
   .signup-form input[type='text'],
   .signup-form input[type='email'],
   .signup-form input[type='date'],
+  .signup-form input[type='number'],
   .signup-form input[type='password'] {
     height: 46px;
     border-radius: 10px;
@@ -19,6 +20,7 @@
   
   .signup-form input[type='text']::placeholder,
   .signup-form input[type='email']::placeholder,
+  .signup-form input[type='number']::placeholder,
   .signup-form input[type='password']::placeholder {
     color: var(--auth-placeholder, #5b657d);
   }
