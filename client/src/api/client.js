@@ -1,6 +1,6 @@
 import { readAuthToken } from './session'
 
-const API_BASE_URL = 'postgresql://full_stack_project_postgres_user:NODHGMSctI5kGsIqaM2YUFWUqKkkE2pX@dpg-d9pefgvlk1mc73dup170-a.oregon-postgres.render.com/full_stack_project_postgres'
+const API_BASE_URL = 'https://full-stack-project-3-m5k7.onrender.com/'
 
 const buildUrl = (path, params) => {
   const cleanPath = path.startsWith('/') ? path : `/${path}`

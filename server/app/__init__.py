@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, app
+from flask import Flask, app, jsonify
 from app.extensions import db, ma, jwt
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -40,6 +40,10 @@ def create_app():
     app.register_blueprint(savings_bp, url_prefix="/savings")
     app.register_blueprint(transactions_bp, url_prefix="/transactions")
     app.register_blueprint(tags_bp, url_prefix="/tags")
+
+    @app.route('/')
+    def home():
+        return jsonify({'message': 'Welcome to EXECUTIVE'}), 200
 
     return app
 
