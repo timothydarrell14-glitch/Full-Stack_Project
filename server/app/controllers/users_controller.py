@@ -20,8 +20,10 @@ class UserController:
         return new_user
 # get all
     @classmethod
-    def get_all_users(cls, current_user_id, page=1, per_page=10):
-        query = User.query.filter_by(id=current_user_id)
+    def get_all_users(cls, current_user_id, page=1, per_page=10, role=None):
+        # if role == 'admin':
+        #     return User.query.all()
+        query = User.query.filter_by(id=current_user_id).first()
         return paginate(query, page, per_page)
 # get 1
     @classmethod

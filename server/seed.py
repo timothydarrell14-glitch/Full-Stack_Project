@@ -32,11 +32,13 @@ def seed_data():
             {"name": "James Foster", "email": "james@example.com", "age": 37, "password": "password8"},
             {"name": "Amelia Scott", "email": "amelia@example.com", "age": 31, "password": "password9"},
             {"name": "Benjamin Gray", "email": "benjamin@example.com", "age": 39, "password": "password10"},
+            # {"name": "Admin User", "email": "admin@example.com", "age": 40, "password": "adminpassword", "role": "admin"},
         ]
 
         created_users = []
         for data in users:
-            user = User(name=data["name"], email=data["email"], age=data["age"], role="client")
+            # role = data.get("role", "client")
+            user = User(name=data["name"], email=data["email"], age=data["age"], role=role)
             user.set_password(data["password"])
             db.session.add(user)
             created_users.append(user)

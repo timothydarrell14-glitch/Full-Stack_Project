@@ -3,12 +3,13 @@ import os
 from flask import Flask
 from app.extensions import db, ma, jwt, cors
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 migrate = Migrate()
 
-
 def create_app():
     app = Flask(__name__)
+    CORS(app)
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///app.db")
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
