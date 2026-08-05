@@ -2,21 +2,6 @@ import { readAuthToken } from './session'
 
 const API_BASE_URL = 'https://full-stack-project-3-m5k7.onrender.com'
 
-// const buildUrl = (path, params) => {
-//   const cleanPath = path.startsWith('/') ? path : `/${path}`
-//   const url = new URL(`${API_BASE_URL}${cleanPath}`)
-
-//   if (params && typeof params === 'object') {
-//     Object.entries(params).forEach(([key, value]) => {
-//       if (value !== undefined && value !== null && value !== '') {
-//         url.searchParams.set(key, value)
-//       }
-//     })
-//   }
-
-//   return url.toString()
-// }
-
 export const apiRequest = async (path, options = {}) => {
   const { method = 'GET', body, token } = options
   const authToken = token || readAuthToken()
