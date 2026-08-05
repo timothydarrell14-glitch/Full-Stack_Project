@@ -81,7 +81,6 @@ function OverviewPage() {
       <header className="overview-header">
         <div>
           <h1 className="overview-title">SYSTEM OVERVIEW</h1>
-          <p className="overview-subtitle">REAL-TIME WEALTH & CASH FLOW TELEMETRY</p>
         </div>
         <div className="overview-status">
           <span className="status-label">STATUS: ONLINE</span>

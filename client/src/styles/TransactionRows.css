@@ -94,6 +94,30 @@
   border-color: #ff799f;
 }
 
+.load-more-row {
+  display: flex;
+  justify-content: center;
+  padding: 14px 0 4px;
+}
+
+.load-more-button {
+  border: 1px solid #2b3243;
+  background: #141925;
+  color: #7c89a5;
+  font-size: 0.78rem;
+  font-family: inherit;
+  letter-spacing: 0.05em;
+  border-radius: 5px;
+  padding: 7px 20px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.load-more-button:hover {
+  color: #62f2ff;
+  border-color: #62f2ff;
+}
+
 @media (max-width: 900px) {
   .transactions-head,
   .transactions-row {

@@ -42,6 +42,24 @@
   border-color: #00e5ff;
 }
 
+.action-input-label {
+  margin: 4px 0 -2px;
+  color: #6f7d9a;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.action-form input[type='date'] {
+  color-scheme: dark;
+  cursor: pointer;
+}
+
+.action-form input[type='date']::-webkit-calendar-picker-indicator {
+  filter: invert(0.6);
+  cursor: pointer;
+}
+
 .action-form button {
   height: 38px;
   border: 1px solid #00c9e4;

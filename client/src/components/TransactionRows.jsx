@@ -1,16 +1,22 @@
 import { useState } from 'react'
 import '../styles/TransactionRows.css'
 
+const PAGE_SIZE = 10
+
 const asCurrency = (amount) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount || 0))
 
 function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
   const [selectedTagByTransaction, setSelectedTagByTransaction] = useState({})
   const [savingTransactionId, setSavingTransactionId] = useState(null)
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
 
   if (!transactions.length) {
     return <p className="transactions-empty">No transaction records available.</p>
   }
+
+  const visible = transactions.slice(0, visibleCount)
+  const hasMore = visibleCount < transactions.length
 
   const handleAddTag = async (transactionId) => {
     const selectedTagId = selectedTagByTransaction[transactionId]
@@ -38,7 +44,7 @@ function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
       </div>
 
       <div className="transactions-body" role="rowgroup">
-        {transactions.map((transaction) => (
+        {visible.map((transaction) => (
           <div className="transactions-row" role="row" key={transaction.id}>
             <p role="cell">{transaction.displayDate}</p>
             <div role="cell">
@@ -99,6 +105,18 @@ function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
           </div>
         ))}
       </div>
+
+      {hasMore && (
+        <div className="load-more-row">
+          <button
+            type="button"
+            className="load-more-button"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+          >
+            Load more ({transactions.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </div>
   )
 }

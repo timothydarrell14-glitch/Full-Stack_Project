@@ -96,9 +96,12 @@ function DashboardActions({ tags, onAddTag, onAddTransaction }) {
             placeholder="Amount"
             required
           />
+          <label className="action-input-label" htmlFor="txn-date">Date</label>
           <input
+            id="txn-date"
             type="date"
             value={transactionForm.date}
+            placeholder={today}
             onChange={(event) =>
               setTransactionForm((current) => ({ ...current, date: event.target.value }))
             }
