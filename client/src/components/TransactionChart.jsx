@@ -60,7 +60,7 @@ function TransactionChart({ transactions }) {
         day: Number(day),
         Income: Math.round(cumIncome * 100) / 100,
         Expenses: Math.round(cumExpenses * 100) / 100,
-        Savings: Math.round((cumIncome - cumExpenses) * 100) / 100,
+        Savings: 0,
       }
     })
   }, [transactions])

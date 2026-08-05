@@ -8,6 +8,7 @@ import {
   RiLogoutBoxRLine,
 } from 'react-icons/ri'
 import { clearAuthToken } from '../api/session'
+import AppearanceButton from './AppearanceButton'
 
 const navItems = [
   { to: '/dashboard', label: 'DASHBOARD', Icon: RiDashboardLine, end: true },
@@ -52,6 +53,10 @@ function SideBar({ collapsed, onToggle }) {
           </NavLink>
         ))}
       </nav>
+
+      <div className="sidebar-theme-wrapper">
+        <AppearanceButton />
+      </div>
 
       <button type="button" className="sidebar-logout-button" onClick={handleLogout}>
         <RiLogoutBoxRLine className="sidebar-nav-icon" />

@@ -79,21 +79,19 @@
 }
 
 .transaction-tag-remove {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   background: none;
   border: none;
-  color: #4a5670;
+  color: #6a7590;
   font-size: 0.82rem;
-  padding: 0;
-  cursor: pointer;
   line-height: 1;
-  transition: color 0.15s;
+  padding: 0 0 0 3px;
+  cursor: pointer;
 }
 
-.transaction-tag-remove:hover {
-  color: #ff799f;
+.transaction-tag-remove:focus,
+.transaction-tag-remove:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .no-tags-label {

@@ -34,6 +34,35 @@
   outline-offset: 2px;
 }
 
+/* --- sidebar variant --- */
+
+.sidebar-theme-wrapper {
+  margin: 4px 10px;
+}
+
+.sidebar-theme-wrapper .appearance-button {
+  position: static;
+  width: 100%;
+  border-radius: 6px;
+  height: auto;
+  padding: 11px 10px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  justify-content: flex-start;
+  transform: none !important;
+}
+
+/* hide text label when sidebar is collapsed */
+.is-collapsed .sidebar-theme-wrapper .appearance-button span:not(.appearance-icon) {
+  display: none;
+}
+
+.is-collapsed .sidebar-theme-wrapper .appearance-button {
+  justify-content: center;
+  padding-inline: 8px;
+}
+
 @media (max-width: 560px) {
   .appearance-button {
     top: 12px;

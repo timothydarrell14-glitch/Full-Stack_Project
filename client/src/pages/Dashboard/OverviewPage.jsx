@@ -97,7 +97,7 @@ function OverviewPage() {
     <section className="overview-page">
       <header className="overview-header">
         <div>
-          <h1 className="overview-title">SYSTEM OVERVIEW</h1>
+          <h1 className="overview-title">DASHBOARD</h1>
         </div>
         <div className="overview-status">
           <span className="status-label">STATUS: ONLINE</span>

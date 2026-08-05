@@ -7,6 +7,7 @@ const initialTransaction = {
   name: '',
   amount: '',
   date: '',
+  type: 'expense',
 }
 
 function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
@@ -63,9 +64,10 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
 
     setIsSaving(true)
     try {
+      const rawAmount = Number(transactionForm.amount)
       await onAddTransaction({
         name: transactionForm.name.trim(),
-        amount: Number(transactionForm.amount),
+        amount: transactionForm.type === 'expense' ? -Math.abs(rawAmount) : Math.abs(rawAmount),
         date: transactionForm.date || today,
         ...(selectedTagIds.length ? { tag_ids: selectedTagIds } : {}),
       })
@@ -123,6 +125,23 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
 
         <form className="action-form" onSubmit={handleTransactionSubmit}>
           <p className="action-title">ADD TRANSACTION</p>
+
+          <div className="txn-type-row" role="group" aria-label="Transaction type">
+            <button
+              type="button"
+              className={`txn-type-btn ${transactionForm.type === 'expense' ? 'is-active-expense' : ''}`}
+              onClick={() => setTransactionForm((c) => ({ ...c, type: 'expense' }))}
+            >
+              Expense
+            </button>
+            <button
+              type="button"
+              className={`txn-type-btn ${transactionForm.type === 'income' ? 'is-active-income' : ''}`}
+              onClick={() => setTransactionForm((c) => ({ ...c, type: 'income' }))}
+            >
+              Income
+            </button>
+          </div>
           <input
             type="text"
             value={transactionForm.name}
