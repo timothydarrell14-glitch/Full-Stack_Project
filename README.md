@@ -152,7 +152,7 @@ erDiagram
 
 ## Live Deployment
 
-- **Client:** https://full-stack-project-amber.vercel.app/authentication/login (Vercel)
+- **Client:** https://full-stack-project-61pf53erf-timothynjagi-6288s-projects.vercel.app/dashboard (Vercel)
 - **Server:** https://full-stack-project-14xc.onrender.com (Render)
 
 ## Runtime Topology
