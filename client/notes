@@ -1,0 +1,14 @@
+1. make bar graphs instead of line graphs
+2. make the savings page*(refference the model on stitch)
+3. add a tag section for transactions
+4. add a load more button for transactions 
+5. rename ledger(delete), command center(change to settings) and savings 
+6. remove the age section from login
+7. change the date section to be more responsive
+8. change the time to be responsive
+9. remove the sub heading in dashboard
+10. change the icon for the website
+11. make the website more dynamic(different devices)
+12. structure the bar graph
+13. go through calculations
+14. change db framework, jwt_secret_key
