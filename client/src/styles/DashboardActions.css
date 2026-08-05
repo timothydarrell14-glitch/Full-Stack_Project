@@ -87,6 +87,74 @@
   text-transform: uppercase;
 }
 
+/* --- tag chips --- */
+
+.tag-chips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px 3px 10px;
+  border: 1px solid #2b3346;
+  background: #121826;
+  color: #8090ae;
+  font-size: 0.74rem;
+  border-radius: 4px;
+}
+
+.tag-chip-delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #4a5670;
+  font-size: 0.9rem;
+  line-height: 1;
+  padding: 0;
+  height: auto;
+  width: auto;
+  min-width: unset;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.tag-chip-delete:hover {
+  color: #ff799f;
+}
+
+.tag-chip-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border: 1px solid #2b3346;
+  background: #121826;
+  color: #8090ae;
+  font-family: inherit;
+  font-size: 0.74rem;
+  border-radius: 4px;
+  height: auto;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.tag-chip-toggle:hover {
+  border-color: #4f9cf9;
+  color: #4f9cf9;
+}
+
+.tag-chip-toggle.is-selected {
+  border-color: #4f9cf9;
+  background: #0d2040;
+  color: #4f9cf9;
+}
+
 @media (max-width: 980px) {
   .dashboard-actions-grid {
     grid-template-columns: 1fr;

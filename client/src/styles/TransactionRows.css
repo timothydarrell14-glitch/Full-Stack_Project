@@ -54,6 +54,53 @@
   font-size: 0.74rem;
 }
 
+.transaction-tags-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.transaction-tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.transaction-tag-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 6px 2px 8px;
+  border: 1px solid #2b3346;
+  background: #121826;
+  color: #8090ae;
+  font-size: 0.72rem;
+  border-radius: 4px;
+}
+
+.transaction-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: #4a5670;
+  font-size: 0.82rem;
+  padding: 0;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.transaction-tag-remove:hover {
+  color: #ff799f;
+}
+
+.no-tags-label {
+  color: #4a5670;
+  font-size: 0.74rem;
+}
+
 .tag-edit-controls {
   margin-top: 6px;
   display: inline-flex;

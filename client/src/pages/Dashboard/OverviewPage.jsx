@@ -20,7 +20,9 @@ function OverviewPage() {
     error,
     addTransaction,
     addTag,
+    removeTag,
     attachTagToTransaction,
+    detachTagFromTransaction,
     removeTransaction,
   } = useDashboardData()
 
@@ -73,6 +75,14 @@ function OverviewPage() {
       await showSuccessAlert('Tag added', 'Transaction updated with selected tag.')
     } catch (updateError) {
       await showErrorAlert('Tag update failed', updateError.message || 'Unable to update transaction tag.')
+    }
+  }
+
+  const handleDetachTag = async (transactionId, tagId) => {
+    try {
+      await detachTagFromTransaction(transactionId, tagId)
+    } catch (detachError) {
+      await showErrorAlert('Remove tag failed', detachError.message || 'Unable to remove tag.')
     }
   }
 
@@ -141,12 +151,13 @@ function OverviewPage() {
               tags={tags}
               onDelete={handleDeleteTransaction}
               onAttachTag={handleAttachTag}
+              onDetachTag={handleDetachTag}
             />
           </>
         ) : null}
       </section>
 
-      <DashboardActions tags={tags} onAddTag={addTag} onAddTransaction={addTransaction} />
+      <DashboardActions tags={tags} onAddTag={addTag} onDeleteTag={removeTag} onAddTransaction={addTransaction} />
     </section>
   )
 }

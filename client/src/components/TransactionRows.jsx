@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { RiCloseLine } from 'react-icons/ri'
 import '../styles/TransactionRows.css'
 
 const PAGE_SIZE = 10
@@ -6,7 +7,7 @@ const PAGE_SIZE = 10
 const asCurrency = (amount) =>
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount || 0))
 
-function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
+function TransactionRows({ transactions, tags, onDelete, onAttachTag, onDetachTag }) {
   const [selectedTagByTransaction, setSelectedTagByTransaction] = useState({})
   const [savingTransactionId, setSavingTransactionId] = useState(null)
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE)
@@ -59,12 +60,26 @@ function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
               {asCurrency(transaction.amount)}
             </p>
 
-            <p role="cell">
-              <span className="transaction-tags-readonly">
-                {transaction.tags.length
-                  ? transaction.tags.map((tag) => tag.name).join(' · ')
-                  : 'No tags'}
-              </span>
+            <div role="cell" className="transaction-tags-cell">
+              <div className="transaction-tag-chips">
+                {transaction.tags.length ? (
+                  transaction.tags.map((tag) => (
+                    <span key={tag.id} className="transaction-tag-chip">
+                      {tag.name}
+                      <button
+                        type="button"
+                        className="transaction-tag-remove"
+                        onClick={() => onDetachTag(transaction.id, tag.id)}
+                        aria-label={`Remove tag ${tag.name}`}
+                      >
+                        <RiCloseLine />
+                      </button>
+                    </span>
+                  ))
+                ) : (
+                  <span className="no-tags-label">No tags</span>
+                )}
+              </div>
               <span className="tag-edit-controls">
                 <select
                   value={selectedTagByTransaction[transaction.id] || ''}
@@ -91,7 +106,7 @@ function TransactionRows({ transactions, tags, onDelete, onAttachTag }) {
                   {savingTransactionId === transaction.id ? 'Saving...' : 'Add tag'}
                 </button>
               </span>
-            </p>
+            </div>
 
             <p role="cell">
               <button

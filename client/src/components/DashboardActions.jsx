@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { showErrorAlert, showSuccessAlert } from '../api/alerts'
+import { RiCloseLine } from 'react-icons/ri'
+import { showConfirmAlert, showErrorAlert, showSuccessAlert } from '../api/alerts'
 import '../styles/DashboardActions.css'
 
 const initialTransaction = {
@@ -8,9 +9,10 @@ const initialTransaction = {
   date: '',
 }
 
-function DashboardActions({ tags, onAddTag, onAddTransaction }) {
+function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
   const [tagName, setTagName] = useState('')
   const [transactionForm, setTransactionForm] = useState(initialTransaction)
+  const [selectedTagIds, setSelectedTagIds] = useState([])
   const [isSaving, setIsSaving] = useState(false)
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -33,6 +35,29 @@ function DashboardActions({ tags, onAddTag, onAddTransaction }) {
     }
   }
 
+  const handleDeleteTag = async (tagId) => {
+    const decision = await showConfirmAlert(
+      'Delete tag?',
+      'This will remove the tag from all transactions.',
+      'Delete',
+    )
+    if (!decision.isConfirmed) {
+      return
+    }
+    try {
+      await onDeleteTag(tagId)
+      setSelectedTagIds((current) => current.filter((id) => id !== tagId))
+    } catch (error) {
+      await showErrorAlert('Failed to delete tag', error.message || 'Try again.')
+    }
+  }
+
+  const toggleTransactionTag = (tagId) => {
+    setSelectedTagIds((current) =>
+      current.includes(tagId) ? current.filter((id) => id !== tagId) : [...current, tagId],
+    )
+  }
+
   const handleTransactionSubmit = async (event) => {
     event.preventDefault()
 
@@ -42,8 +67,10 @@ function DashboardActions({ tags, onAddTag, onAddTransaction }) {
         name: transactionForm.name.trim(),
         amount: Number(transactionForm.amount),
         date: transactionForm.date || today,
+        ...(selectedTagIds.length ? { tag_ids: selectedTagIds } : {}),
       })
       setTransactionForm(initialTransaction)
+      setSelectedTagIds([])
       await showSuccessAlert('Transaction added', 'The transaction has been saved.')
     } catch (error) {
       await showErrorAlert('Failed to add transaction', error.message || 'Try again.')
@@ -72,7 +99,26 @@ function DashboardActions({ tags, onAddTag, onAddTransaction }) {
           <button type="submit" disabled={isSaving}>
             Add Label Tag
           </button>
-          <p className="action-meta">Current tags: {tags.length}</p>
+
+          {tags.length > 0 ? (
+            <div className="tag-chips-list" aria-label="Existing tags">
+              {tags.map((tag) => (
+                <span key={tag.id} className="tag-chip">
+                  {tag.name}
+                  <button
+                    type="button"
+                    className="tag-chip-delete"
+                    onClick={() => handleDeleteTag(tag.id)}
+                    aria-label={`Delete tag ${tag.name}`}
+                  >
+                    <RiCloseLine />
+                  </button>
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="action-meta">No tags yet.</p>
+          )}
         </form>
 
         <form className="action-form" onSubmit={handleTransactionSubmit}>
@@ -106,6 +152,25 @@ function DashboardActions({ tags, onAddTag, onAddTransaction }) {
               setTransactionForm((current) => ({ ...current, date: event.target.value }))
             }
           />
+
+          {tags.length > 0 && (
+            <>
+              <p className="action-input-label">Tags</p>
+              <div className="tag-chips-list" aria-label="Select tags for this transaction">
+                {tags.map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    className={`tag-chip-toggle ${selectedTagIds.includes(tag.id) ? 'is-selected' : ''}`}
+                    onClick={() => toggleTransactionTag(tag.id)}
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+
           <button type="submit" disabled={isSaving}>
             Add Transaction
           </button>

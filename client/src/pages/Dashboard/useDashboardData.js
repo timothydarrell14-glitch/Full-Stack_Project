@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   createTag,
   createTransaction,
+  deleteTag,
   deleteTransaction,
   getTags,
   getTransactions,
@@ -89,7 +90,7 @@ export function useDashboardData() {
   }, [])
 
   useEffect(() => {
-    loadDashboardData()
+     loadDashboardData()
   }, [loadDashboardData])
 
   const recentMonthTransactions = useMemo(() => {
@@ -127,6 +128,15 @@ export function useDashboardData() {
     return response
   }, [])
 
+  const removeTag = useCallback(async (tagId) => {
+    await deleteTag(tagId)
+    setTags((current) => current.filter((tag) => tag.id !== tagId))
+    // strip the deleted tag from all cached transactions
+    setTransactions((current) =>
+      current.map((t) => ({ ...t, tags: t.tags.filter((tag) => tag.id !== tagId) }))
+    )
+  }, [])
+
   const attachTagToTransaction = useCallback(async (transactionId, tagId) => {
     const transaction = transactions.find((entry) => entry.id === transactionId)
     if (!transaction) {
@@ -157,6 +167,29 @@ export function useDashboardData() {
     return parsed
   }, [transactions])
 
+  const detachTagFromTransaction = useCallback(async (transactionId, tagId) => {
+    const transaction = transactions.find((entry) => entry.id === transactionId)
+    if (!transaction) return null
+
+    const payload = {
+      name: transaction.name,
+      amount: transaction.amount,
+      date: formatDateForApi(transaction.date),
+      tag_ids: transaction.tags.map((tag) => tag.id).filter((id) => id !== tagId),
+    }
+
+    const response = await updateTransaction(transactionId, payload)
+    const parsed = transactionToPoint(response)
+    if (parsed) {
+      setTransactions((current) =>
+        current
+          .map((entry) => (entry.id === transactionId ? parsed : entry))
+          .sort((a, b) => b.date - a.date),
+      )
+    }
+    return parsed
+  }, [transactions])
+
   return {
     tags,
     allTransactions: transactions,
@@ -166,7 +199,9 @@ export function useDashboardData() {
     error,
     addTransaction,
     addTag,
+    removeTag,
     attachTagToTransaction,
+    detachTagFromTransaction,
     removeTransaction,
     reload: loadDashboardData,
   }

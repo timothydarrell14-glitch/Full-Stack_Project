@@ -27,12 +27,8 @@ function SideBar({ collapsed, onToggle }) {
   return (
     <aside className={`dashboard-sidebar ${collapsed ? 'is-collapsed' : ''}`}>
       <div className="sidebar-branding">
-        <div className="sidebar-brand-mark" aria-hidden="true">
-          <RiShieldStarLine />
-        </div>
         <div className="sidebar-brand-copy" aria-hidden={collapsed}>
           <p className="sidebar-brand-title">EXECUTIVE</p>
-          <p className="sidebar-brand-subtitle">TERMINAL ADMIN</p>
         </div>
         <button
           type="button"
