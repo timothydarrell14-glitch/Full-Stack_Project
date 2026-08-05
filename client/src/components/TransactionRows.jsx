@@ -57,7 +57,7 @@ function TransactionRows({ transactions, tags, onDelete, onAttachTag, onDetachTa
               </p>
             </div>
             <p role="cell" className="transaction-amount">
-              {asCurrency(transaction.amount)}
+              {asCurrency(-Math.abs(transaction.amount))}
             </p>
 
             <div role="cell" className="transaction-tags-cell">
