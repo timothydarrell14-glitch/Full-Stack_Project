@@ -2,8 +2,8 @@
 	min-height: 100vh;
 	display: grid;
 	grid-template-columns: 220px 1fr;
-	background: #090b10;
-	color: #d5d9e2;
+	background: var(--page-bg);
+	color: var(--text-primary);
 	font-family: 'JetBrains Mono', 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono',
 		'Courier New', monospace;
 }
@@ -18,8 +18,8 @@
 
 .dashboard-sidebar {
 	min-height: 100vh;
-	border-right: 1px solid #1c2029;
-	background: linear-gradient(180deg, #090b10 0%, #07090d 100%);
+	border-right: 1px solid var(--surface-border);
+	background: var(--page-bg);
 	position: sticky;
 	top: 0;
 	display: flex;
@@ -56,7 +56,7 @@
 	align-items: center;
 	gap: 12px;
 	padding: 16px 14px;
-	border-bottom: 1px solid #1a1e27;
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .sidebar-collapse-button {
@@ -103,7 +103,7 @@
 }
 
 .sidebar-brand-title {
-	color: #f2f4f9;
+	color: var(--text-primary);
 	font-weight: 700;
 	letter-spacing: 0.13em;
 	font-size: 12px;
@@ -130,7 +130,7 @@
 	align-items: center;
 	gap: 10px;
 	text-decoration: none;
-	color: #727989;
+	color: var(--text-secondary);
 	border: 1px solid transparent;
 	border-radius: 6px;
 	padding: 11px 10px;
@@ -149,9 +149,9 @@
 }
 
 .sidebar-nav-item:hover {
-	color: #b8becc;
-	border-color: #252a35;
-	background: #0f1219;
+	color: var(--text-primary);
+	border-color: var(--surface-border);
+	background: var(--surface-2-bg);
 }
 
 .sidebar-nav-item:hover .sidebar-nav-icon {
@@ -159,9 +159,9 @@
 }
 
 .sidebar-nav-item.is-active {
-	color: #edf0f6;
-	background: #11151d;
-	border-color: #1c2430;
+	color: var(--text-primary);
+	background: var(--surface-2-bg);
+	border-color: var(--surface-border);
 }
 
 .sidebar-nav-item.is-active::before {
@@ -216,12 +216,12 @@
 	align-items: flex-start;
 	gap: 14px;
 	padding-bottom: 12px;
-	border-bottom: 1px solid #1c2029;
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .overview-title {
 	margin: 0;
-	color: #eceef4;
+	color: var(--text-primary);
 	font-size: clamp(1.6rem, 2.4vw, 2.2rem);
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
@@ -266,8 +266,8 @@
 
 .metric-card,
 .dashboard-panel {
-	background: #12151c;
-	border: 1px solid #1f2430;
+	background: var(--surface-bg);
+	border: 1px solid var(--surface-border);
 }
 
 .metric-card {
@@ -284,7 +284,7 @@
 
 .metric-label {
 	margin: 0;
-	color: #687186;
+	color: var(--text-muted);
 	font-size: 0.72rem;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
@@ -297,14 +297,14 @@
 
 .metric-value {
 	margin: 13px 0 8px;
-	color: #f0f2f8;
+	color: var(--text-primary);
 	font-size: clamp(1.25rem, 2.5vw, 2rem);
 	letter-spacing: 0.015em;
 }
 
 .metric-trend {
 	margin: 0;
-	color: #7d8697;
+	color: var(--text-secondary);
 	font-size: 0.82rem;
 }
 
@@ -349,7 +349,7 @@
 
 .panel-state-message {
 	margin-top: 12px;
-	color: #8a95ac;
+	color: var(--text-secondary);
 	text-align: left;
 }
 
@@ -366,7 +366,7 @@
 
 .panel-header h2 {
 	margin: 0;
-	color: #edf0f6;
+	color: var(--text-primary);
 	font-size: 0.95rem;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;

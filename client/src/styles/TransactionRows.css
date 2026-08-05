@@ -17,12 +17,12 @@
 }
 
 .transactions-head {
-  color: #667084;
+  color: var(--text-muted);
   font-size: 0.73rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding-bottom: 8px;
-  border-bottom: 1px solid #242b38;
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .transactions-head p,
@@ -32,13 +32,13 @@
 
 .transactions-row {
   padding: 10px 0;
-  border-bottom: 1px solid #1e2430;
-  color: #b7bfce;
+  border-bottom: 1px solid var(--surface-border);
+  color: var(--text-secondary);
   font-size: 0.88rem;
 }
 
 .transaction-name {
-  color: #ebeff7;
+  color: var(--text-primary);
   font-size: 0.91rem;
 }
 
@@ -71,9 +71,9 @@
   align-items: center;
   gap: 3px;
   padding: 2px 6px 2px 8px;
-  border: 1px solid #2b3346;
-  background: #121826;
-  color: #8090ae;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-2-bg);
+  color: var(--text-secondary);
   font-size: 0.72rem;
   border-radius: 4px;
 }

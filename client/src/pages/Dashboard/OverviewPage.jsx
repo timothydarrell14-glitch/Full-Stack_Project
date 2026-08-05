@@ -16,6 +16,8 @@ function OverviewPage() {
     allTransactions,
     recentMonthTransactions,
     metrics,
+    income,
+    setIncome,
     isLoading,
     error,
     addTransaction,
@@ -113,20 +115,20 @@ function OverviewPage() {
               <RiLineChartLine aria-hidden="true" />
             </span>
           </div>
-          <p className="metric-value">{formatMoney(metrics.totalNetWorth)}</p>
+          <p className="metric-value">{formatMoney(income - metrics.totalExpenses)}</p>
           <p className="metric-trend">Income minus expenses</p>
         </article>
 
         <article className="metric-card metric-income">
           <p className="metric-label">TOTAL INCOME</p>
-          <p className="metric-value">{formatMoney(metrics.inboundTotal)}</p>
-          <p className="metric-trend">All positive transactions</p>
+          <p className="metric-value">{formatMoney(income)}</p>
+          <p className="metric-trend">Monthly income set</p>
         </article>
 
         <article className="metric-card metric-expense">
           <p className="metric-label">TOTAL EXPENSES</p>
-          <p className="metric-value">{formatMoney(Math.abs(metrics.burnRate))}</p>
-          <p className="metric-trend">All negative transactions</p>
+          <p className="metric-value">{formatMoney(metrics.totalExpenses)}</p>
+          <p className="metric-trend">All transactions</p>
         </article>
 
         <article className="metric-card">
@@ -152,7 +154,7 @@ function OverviewPage() {
 
         {!isLoading && !error ? (
           <>
-            <TransactionChart transactions={filteredRecentMonthTransactions} />
+            <TransactionChart transactions={filteredTransactions} income={income} />
             <TransactionRows
               transactions={filteredTransactions}
               tags={tags}
@@ -164,7 +166,14 @@ function OverviewPage() {
         ) : null}
       </section>
 
-      <DashboardActions tags={tags} onAddTag={addTag} onDeleteTag={removeTag} onAddTransaction={addTransaction} />
+      <DashboardActions
+        tags={tags}
+        onAddTag={addTag}
+        onDeleteTag={removeTag}
+        onAddTransaction={addTransaction}
+        income={income}
+        onSetIncome={setIncome}
+      />
     </section>
   )
 }

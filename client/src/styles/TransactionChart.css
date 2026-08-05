@@ -1,21 +1,21 @@
 .chart-container {
   margin-top: 12px;
   padding: 16px 8px 8px;
-  background: #0d1017;
+  background: var(--surface-2-bg);
   border-radius: 8px;
-  border: 1px solid #1a2030;
+  border: 1px solid var(--surface-border);
 }
 
 .chart-subtitle {
   margin: 0 0 12px 8px;
-  color: #6f7790;
+  color: var(--text-muted);
   font-size: 0.78rem;
   letter-spacing: 0.03em;
 }
 
 .chart-empty {
   margin-top: 14px;
-  color: #8e96ab;
+  color: var(--text-secondary);
   font-size: 0.86rem;
 }
 

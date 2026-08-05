@@ -30,57 +30,52 @@ const tooltipStyle = {
   fontSize: 12,
 }
 
-function TransactionChart({ transactions }) {
+function TransactionChart({ transactions, income = 0 }) {
   const chartData = useMemo(() => {
     if (!transactions.length) return []
 
-    const maxDay = Math.max(...transactions.map((t) => t.day))
-
-    // accumulate income and expenses per day
-    const byDay = {}
-    for (let d = 1; d <= maxDay; d++) {
-      byDay[d] = { income: 0, expenses: 0 }
-    }
+    // group by exact date so cross-month days don't collide
+    const byDate = {}
     for (const t of transactions) {
-      if (t.amount >= 0) {
-        byDay[t.day].income += t.amount
-      } else {
-        byDay[t.day].expenses += Math.abs(t.amount)
-      }
+      const key = t.date.toISOString().slice(0, 10)
+      if (!byDate[key]) byDate[key] = { displayDate: t.displayDate, expenses: 0 }
+      byDate[key].expenses += Math.abs(t.amount)
     }
 
-    // build cumulative running totals across the month
-    let cumIncome = 0
-    let cumExpenses = 0
+    const sorted = Object.entries(byDate).sort(([a], [b]) => a.localeCompare(b))
 
-    return Object.entries(byDay).map(([day, { income, expenses }]) => {
-      cumIncome += income
+    let cumExpenses = 0
+    return sorted.map(([, { displayDate, expenses }]) => {
       cumExpenses += expenses
       return {
-        day: Number(day),
-        Income: Math.round(cumIncome * 100) / 100,
-        Expenses: Math.round(cumExpenses * 100) / 100,
-        Savings: 0,
+        date: displayDate,
+        Expenses: Math.round(expenses * 100) / 100,
+        ...(income > 0 && {
+          Income: income,
+          Savings: Math.round((income - cumExpenses) * 100) / 100,
+        }),
       }
     })
-  }, [transactions])
+  }, [transactions, income])
 
   if (!chartData.length) {
-    return <div className="chart-empty">No transactions available for the latest month.</div>
+    return <div className="chart-empty">No transactions available.</div>
   }
+
+  const maxDailyExpense = Math.max(...chartData.map((d) => d.Expenses))
+  const yTop = income > 0 ? Math.max(income, maxDailyExpense) * 1.1 : maxDailyExpense * 1.2 || 100
 
   return (
     <div className="chart-container">
-      <p className="chart-subtitle">Cumulative income, expenses, and savings across the month</p>
+      <p className="chart-subtitle">Daily expenses{income > 0 ? ', monthly income ceiling and savings remaining' : ''}</p>
       <ResponsiveContainer width="100%" height={280}>
         <LineChart data={chartData} margin={{ top: 10, right: 24, left: 8, bottom: 4 }}>
           <CartesianGrid strokeDasharray="4 4" stroke="#1a2030" vertical={false} />
           <XAxis
-            dataKey="day"
+            dataKey="date"
             tick={{ fill: '#6f7790', fontSize: 11 }}
             axisLine={false}
             tickLine={false}
-            tickFormatter={(d) => `Day ${d}`}
             interval="preserveStartEnd"
           />
           <YAxis
@@ -89,42 +84,47 @@ function TransactionChart({ transactions }) {
             axisLine={false}
             tickLine={false}
             width={72}
+            domain={[0, yTop]}
           />
           <Tooltip
             formatter={(value, name) => [formatFull(value), name]}
             contentStyle={tooltipStyle}
             labelStyle={{ color: '#8e96ab', marginBottom: 4 }}
-            labelFormatter={(d) => `Day ${d}`}
             cursor={{ stroke: '#2a3450', strokeWidth: 1 }}
           />
           <Legend
             wrapperStyle={{ color: '#d7e0ef', fontSize: 12, paddingTop: 14 }}
             iconType="circle"
           />
-          <Line
-            type="monotone"
-            dataKey="Income"
-            stroke="#4f9cf9"
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 5, fill: '#4f9cf9' }}
-          />
+          {income > 0 && (
+            <Line
+              type="monotone"
+              dataKey="Income"
+              stroke="#4f9cf9"
+              strokeWidth={2}
+              strokeDasharray="6 3"
+              dot={false}
+              activeDot={{ r: 5, fill: '#4f9cf9' }}
+            />
+          )}
           <Line
             type="monotone"
             dataKey="Expenses"
-            stroke="#4ecb8b"
+            stroke="#ff2f66"
             strokeWidth={2}
             dot={false}
-            activeDot={{ r: 5, fill: '#4ecb8b' }}
+            activeDot={{ r: 5, fill: '#ff2f66' }}
           />
-          <Line
-            type="monotone"
-            dataKey="Savings"
-            stroke="#f97c4f"
-            strokeWidth={2}
-            dot={false}
-            activeDot={{ r: 5, fill: '#f97c4f' }}
-          />
+          {income > 0 && (
+            <Line
+              type="monotone"
+              dataKey="Savings"
+              stroke="#f97c4f"
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 5, fill: '#f97c4f' }}
+            />
+          )}
         </LineChart>
       </ResponsiveContainer>
     </div>

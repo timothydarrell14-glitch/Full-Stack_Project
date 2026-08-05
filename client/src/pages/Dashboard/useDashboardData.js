@@ -11,6 +11,8 @@ import {
 
 const getMonthKey = (date) => `${date.getUTCFullYear()}-${date.getUTCMonth()}`
 
+const INCOME_KEY = 'executive-monthly-income'
+
 const parseDate = (value) => {
   const parsed = new Date(value)
   return Number.isNaN(parsed.getTime()) ? null : parsed
@@ -44,7 +46,7 @@ const transactionToPoint = (transaction) => {
 }
 
 const calculateMetrics = (transactions) => {
-  const totalNetWorth = transactions.reduce((sum, transaction) => sum + transaction.amount, 0)
+  const totalExpenses = transactions.reduce((sum, transaction) => sum + Math.abs(transaction.amount), 0)
   const inbound = transactions.filter((transaction) => transaction.amount >= 0)
   const outbound = transactions.filter((transaction) => transaction.amount < 0)
 
@@ -52,9 +54,10 @@ const calculateMetrics = (transactions) => {
   const burnRate = outbound.reduce((sum, transaction) => sum + transaction.amount, 0)
 
   return {
-    totalNetWorth,
+    totalNetWorth: inboundTotal + burnRate,
     inboundTotal,
     burnRate,
+    totalExpenses,
     transactionCount: transactions.length,
   }
 }
@@ -64,6 +67,16 @@ export function useDashboardData() {
   const [tags, setTags] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [income, setIncomeState] = useState(() => {
+    const stored = window.localStorage.getItem(INCOME_KEY)
+    return stored ? Number(stored) : 0
+  })
+
+  const setIncome = useCallback((value) => {
+    const num = Math.max(0, Number(value) || 0)
+    window.localStorage.setItem(INCOME_KEY, String(num))
+    setIncomeState(num)
+  }, [])
 
   const loadDashboardData = useCallback(async () => {
     setIsLoading(true)
@@ -195,6 +208,8 @@ export function useDashboardData() {
     allTransactions: transactions,
     recentMonthTransactions,
     metrics,
+    income,
+    setIncome,
     isLoading,
     error,
     addTransaction,

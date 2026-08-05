@@ -1,29 +1,29 @@
 import { useMemo, useState } from 'react'
 import { RiCloseLine } from 'react-icons/ri'
-import { showConfirmAlert, showErrorAlert, showSuccessAlert } from '../api/alerts'
+import { showErrorAlert, showSuccessAlert } from '../api/alerts'
 import '../styles/DashboardActions.css'
+
+const formatMoney = (v) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(v || 0))
 
 const initialTransaction = {
   name: '',
   amount: '',
   date: '',
-  type: 'expense',
 }
 
-function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
+function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction, income, onSetIncome }) {
   const [tagName, setTagName] = useState('')
   const [transactionForm, setTransactionForm] = useState(initialTransaction)
   const [selectedTagIds, setSelectedTagIds] = useState([])
+  const [incomeInput, setIncomeInput] = useState('')
   const [isSaving, setIsSaving] = useState(false)
 
   const today = useMemo(() => new Date().toISOString().slice(0, 10), [])
 
   const handleTagSubmit = async (event) => {
     event.preventDefault()
-    if (!tagName.trim()) {
-      return
-    }
-
+    if (!tagName.trim()) return
     setIsSaving(true)
     try {
       await onAddTag(tagName.trim())
@@ -37,14 +37,18 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
   }
 
   const handleDeleteTag = async (tagId) => {
-    const decision = await showConfirmAlert(
-      'Delete tag?',
-      'This will remove the tag from all transactions.',
-      'Delete',
-    )
-    if (!decision.isConfirmed) {
-      return
-    }
+    const { default: Swal } = await import('sweetalert2')
+    const decision = await Swal.fire({
+      title: 'Delete tag?',
+      text: 'This will remove the tag from all transactions.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Delete',
+      confirmButtonColor: '#ff5b88',
+      background: '#12151c',
+      color: '#e7edf9',
+    })
+    if (!decision.isConfirmed) return
     try {
       await onDeleteTag(tagId)
       setSelectedTagIds((current) => current.filter((id) => id !== tagId))
@@ -61,13 +65,12 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
 
   const handleTransactionSubmit = async (event) => {
     event.preventDefault()
-
     setIsSaving(true)
     try {
       const rawAmount = Number(transactionForm.amount)
       await onAddTransaction({
         name: transactionForm.name.trim(),
-        amount: transactionForm.type === 'expense' ? -Math.abs(rawAmount) : Math.abs(rawAmount),
+        amount: -Math.abs(rawAmount),
         date: transactionForm.date || today,
         ...(selectedTagIds.length ? { tag_ids: selectedTagIds } : {}),
       })
@@ -81,6 +84,15 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
     }
   }
 
+  const handleIncomeSubmit = async (event) => {
+    event.preventDefault()
+    const value = Number(incomeInput)
+    if (!value || value <= 0) return
+    onSetIncome(value)
+    setIncomeInput('')
+    await showSuccessAlert('Income updated', `Monthly income set to ${formatMoney(value)}.`)
+  }
+
   return (
     <section className="dashboard-actions-panel" aria-label="Quick actions">
       <header className="panel-header">
@@ -88,6 +100,82 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
       </header>
 
       <div className="dashboard-actions-grid">
+        {/* ── SET INCOME ── */}
+        <form className="action-form" onSubmit={handleIncomeSubmit}>
+          <p className="action-title">MONTHLY INCOME</p>
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={incomeInput}
+            onChange={(event) => setIncomeInput(event.target.value)}
+            placeholder="e.g. 5000.00"
+            required
+          />
+          <button type="submit" disabled={isSaving}>
+            Set Income
+          </button>
+          {income > 0 && (
+            <p className="action-meta">Current: {formatMoney(income)}</p>
+          )}
+        </form>
+
+        {/* ── ADD TRANSACTION ── */}
+        <form className="action-form" onSubmit={handleTransactionSubmit}>
+          <p className="action-title">ADD EXPENSE</p>
+          <input
+            type="text"
+            value={transactionForm.name}
+            onChange={(event) =>
+              setTransactionForm((current) => ({ ...current, name: event.target.value }))
+            }
+            placeholder="Description"
+            required
+          />
+          <input
+            type="number"
+            step="0.01"
+            min="0"
+            value={transactionForm.amount}
+            onChange={(event) =>
+              setTransactionForm((current) => ({ ...current, amount: event.target.value }))
+            }
+            placeholder="Amount"
+            required
+          />
+          <label className="action-input-label" htmlFor="txn-date">Date</label>
+          <input
+            id="txn-date"
+            type="date"
+            value={transactionForm.date}
+            placeholder={today}
+            onChange={(event) =>
+              setTransactionForm((current) => ({ ...current, date: event.target.value }))
+            }
+          />
+          {tags.length > 0 && (
+            <>
+              <p className="action-input-label">Tags</p>
+              <div className="tag-chips-list" aria-label="Select tags for this transaction">
+                {tags.map((tag) => (
+                  <button
+                    key={tag.id}
+                    type="button"
+                    className={`tag-chip-toggle ${selectedTagIds.includes(tag.id) ? 'is-selected' : ''}`}
+                    onClick={() => toggleTransactionTag(tag.id)}
+                  >
+                    {tag.name}
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+          <button type="submit" disabled={isSaving}>
+            Add Expense
+          </button>
+        </form>
+
+        {/* ── ADD TAG ── */}
         <form className="action-form" onSubmit={handleTagSubmit}>
           <p className="action-title">ADD TAG</p>
           <input
@@ -101,7 +189,6 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
           <button type="submit" disabled={isSaving}>
             Add Label Tag
           </button>
-
           {tags.length > 0 ? (
             <div className="tag-chips-list" aria-label="Existing tags">
               {tags.map((tag) => (
@@ -121,78 +208,6 @@ function DashboardActions({ tags, onAddTag, onDeleteTag, onAddTransaction }) {
           ) : (
             <p className="action-meta">No tags yet.</p>
           )}
-        </form>
-
-        <form className="action-form" onSubmit={handleTransactionSubmit}>
-          <p className="action-title">ADD TRANSACTION</p>
-
-          <div className="txn-type-row" role="group" aria-label="Transaction type">
-            <button
-              type="button"
-              className={`txn-type-btn ${transactionForm.type === 'expense' ? 'is-active-expense' : ''}`}
-              onClick={() => setTransactionForm((c) => ({ ...c, type: 'expense' }))}
-            >
-              Expense
-            </button>
-            <button
-              type="button"
-              className={`txn-type-btn ${transactionForm.type === 'income' ? 'is-active-income' : ''}`}
-              onClick={() => setTransactionForm((c) => ({ ...c, type: 'income' }))}
-            >
-              Income
-            </button>
-          </div>
-          <input
-            type="text"
-            value={transactionForm.name}
-            onChange={(event) =>
-              setTransactionForm((current) => ({ ...current, name: event.target.value }))
-            }
-            placeholder="Description"
-            required
-          />
-          <input
-            type="number"
-            step="0.01"
-            value={transactionForm.amount}
-            onChange={(event) =>
-              setTransactionForm((current) => ({ ...current, amount: event.target.value }))
-            }
-            placeholder="Amount"
-            required
-          />
-          <label className="action-input-label" htmlFor="txn-date">Date</label>
-          <input
-            id="txn-date"
-            type="date"
-            value={transactionForm.date}
-            placeholder={today}
-            onChange={(event) =>
-              setTransactionForm((current) => ({ ...current, date: event.target.value }))
-            }
-          />
-
-          {tags.length > 0 && (
-            <>
-              <p className="action-input-label">Tags</p>
-              <div className="tag-chips-list" aria-label="Select tags for this transaction">
-                {tags.map((tag) => (
-                  <button
-                    key={tag.id}
-                    type="button"
-                    className={`tag-chip-toggle ${selectedTagIds.includes(tag.id) ? 'is-selected' : ''}`}
-                    onClick={() => toggleTransactionTag(tag.id)}
-                  >
-                    {tag.name}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-
-          <button type="submit" disabled={isSaving}>
-            Add Transaction
-          </button>
         </form>
       </div>
     </section>
