@@ -30,8 +30,7 @@ def upgrade():
     sa.Column('age', sa.Integer(), nullable=True),
     sa.Column('password', sa.String(length=120), nullable=False),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
-    sa.UniqueConstraint('password')
+    sa.UniqueConstraint('email')
     )
     op.create_table('saving_goals',
     sa.Column('id', sa.Integer(), nullable=False),
