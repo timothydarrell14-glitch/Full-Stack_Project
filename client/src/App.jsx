@@ -17,10 +17,10 @@ function App() {
     <Routes>
       <Route
         path="/"
-        element={<Navigate to={isLoggedIn ? '/dashboard' : '/authentication/login'} replace />}
+        element={<Navigate to={isLoggedIn ? '/dashboard' : '/login'} replace />}
       />
-      <Route path="/authentication/login" element={<LogInPage />} />
-      <Route path="/authentication/signup" element={<SignUpPage />} />
+      <Route path="/login" element={<LogInPage />} />
+      <Route path="/signup" element={<SignUpPage />} />
 
       <Route
         path="/dashboard"
@@ -38,7 +38,7 @@ function App() {
 
       <Route
         path="*"
-        element={<Navigate to={isLoggedIn ? '/dashboard' : '/authentication/login'} replace />}
+        element={<Navigate to={isLoggedIn ? '/dashboard' : '/login'} replace />}
       />
     </Routes>
 
