@@ -97,7 +97,7 @@ function LoginPage() {
           </form>
 
           <p className="signup-copy">
-            Don&apos;t have an account? <Link to="/authentication/signup">Sign up</Link>
+            Don&apos;t have an account? <Link to="/signup">Sign up</Link>
           </p>
         </div>
 

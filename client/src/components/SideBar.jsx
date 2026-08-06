@@ -19,7 +19,7 @@ const navItems = [
 function SideBar({ collapsed, onToggle }) {
   const handleLogout = () => {
     clearAuthToken()
-    window.location.href = '/authentication/login'
+    window.location.href = '/login'
   }
 
   return (

@@ -29,7 +29,7 @@ function SignUpPage() {
         password: formValues.password,
       })
       await showSuccessAlert('Registered successfully', 'Your account has been created.')
-      navigate('/authentication/login', { replace: true })
+      navigate('/login', { replace: true })
     } catch (error) {
       await showErrorAlert('Registration failed', error.message || 'Unable to create account.')
     } finally {
@@ -102,7 +102,7 @@ function SignUpPage() {
           </form>
 
           <p className="signup-copy">
-            Already have an account? <Link to="/authentication/login">Log in</Link>
+            Already have an account? <Link to="/login">Log in</Link>
           </p>
         </div>
 

@@ -8,6 +8,7 @@ class AuthService:
 # authenticate user
     @classmethod
     def authenticate_user(cls, email, password):
+        email = email.strip().lower()
         user = User.query.filter_by(email=email).first()
         if user and user.check_password(password):
             token = create_access_token(identity=str(user.id), additional_claims={
