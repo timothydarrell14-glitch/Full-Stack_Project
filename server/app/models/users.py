@@ -16,9 +16,9 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
-    email = db.Column(db.String(120), nullable=False, unique=True)
+    email = db.Column(db.String(255), nullable=False, unique=True)
     age = db.Column(db.Integer)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(255), nullable=False)
     savings = db.relationship('Saving', back_populates='user', lazy=True)
     transactions = db.relationship('Transaction', back_populates='user', lazy=True)
     role = db.Column(db.String, nullable=False, default='client')
