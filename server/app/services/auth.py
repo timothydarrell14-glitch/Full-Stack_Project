@@ -19,14 +19,11 @@ class AuthService:
         return jsonify({'message': 'Invalid email or password'}), 401
 
     @classmethod
-    def generate_token(cls, email, password):
-        user = User.query.filter_by(email=email).first()
-        if user and user.check_password(password):
+    def generate_token(cls, user):
             return create_access_token(identity=str(user.id), additional_claims={
                 'email': user.email,
                 'id': user.id
             })
-        raise ValueError('Unable to generate token for user')
 
     # @classmethod
     # def authenticate_admin(cls, email, password):

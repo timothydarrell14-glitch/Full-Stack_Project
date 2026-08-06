@@ -18,8 +18,7 @@ def signup():
 
     try:
         user = UserController.add_user(payload)
-        if user:
-            token = AuthService.generate_token(user.email, user.password)
+        token = AuthService.generate_token(user)
 
     except (ValidationError, ValueError) as exc:
         errors = exc.messages if hasattr(exc, 'messages') else {'email': [str(exc)]}
