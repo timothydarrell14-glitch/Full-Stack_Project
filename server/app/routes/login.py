@@ -13,7 +13,7 @@ def login():
     email = data.get('email')
     password = data.get('password')
 
-    if not email or not password:
+    if not email or not password and not isinstance(email, str) and not isinstance(password, str):
         return jsonify({'message': 'Email and password are required'}), 400
 
     return AuthService.authenticate_user(email, password)
