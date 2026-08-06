@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, app, jsonify
+from flask import Flask, jsonify
 from app.extensions import db, ma, jwt
 from flask_migrate import Migrate
 from flask_cors import CORS
@@ -10,7 +10,7 @@ migrate = Migrate()
 def create_app():
     app = Flask(__name__)
     CORS(app,
-        origins="https://full-stack-project-theta-seven.vercel.app",
+        origins=os.environ.get("FRONTEND_URL"),
         supports_credentials=True,
         allow_headers=["Content-Type", "Authorization"],
         methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
