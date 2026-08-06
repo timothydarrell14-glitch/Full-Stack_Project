@@ -9,7 +9,11 @@ migrate = Migrate()
 
 def create_app():
     app = Flask(__name__)
-    CORS(app)
+    CORS(app,
+        origins="https://full-stack-project-theta-seven.vercel.app",
+        supports_credentials=True,
+        allow_headers=["Content-Type", "Authorization"],
+        methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
     uri = os.environ.get("DATABASE_URL")
     if uri and uri.startswith("postgres://"):
